@@ -1,8 +1,11 @@
+import drafts_1
 
-def run():
-    print(f'Hi')
+print('in outer scope!!!!!!!!!')
+# def run():
+#     print(f'Hi')
 
 
 if __name__ == '__main__':
-    run()
+    # run()
+    print('in main!!!!!!!!!!!!')
 
