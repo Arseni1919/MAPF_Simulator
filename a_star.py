@@ -1,23 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from simulator_objects import Node
 
 
 def heuristic(from_node, to_node):
     return np.sqrt((from_node.x - to_node.x) ** 2 + (from_node.y - to_node.y) ** 2)
-
-
-class Node:
-    def __init__(self, ID, x, y, neighbours):
-        self.ID = ID
-        self.x = x
-        self.y = y
-        self.neighbours = neighbours
-        self.parent = None
-        self.g = 0
-        self.h = 0
-
-    def f(self):
-        return self.g + self.h
 
 
 def get_lowest_f_node_from(open_list):
