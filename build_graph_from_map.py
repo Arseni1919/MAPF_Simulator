@@ -52,7 +52,7 @@ def build_graph_from_np(img_np, show_map=False):
             set_nei(name_1, name_2, nodes_dict)
             name_1 = name_2
 
-    print('finished rows')
+    # print('finished rows')
 
     for i_y in range(y_size):
         for i_x in range(x_size):
@@ -60,19 +60,18 @@ def build_graph_from_np(img_np, show_map=False):
             set_nei(name_1, name_2, nodes_dict)
             name_1 = name_2
 
-    print('finished columns')
+    # print('finished columns')
 
-    return nodes
+    return nodes, nodes_dict
 
 
 def main():
+
     # image_name = 'den520d.png'
     # image_name = 'hrt201d.png'
     # image_name = 'Berlin_1_256.png'
     image_name = '10_10_random.png'
-    # nodes = build_graph_from_png(image_name, show_map=True)
-    nodes = build_graph_from_png(image_name)
-    # nodes = build_graph_from_np(img_np, show_map=False)
+    nodes, nodes_dict = build_graph_from_png(image_name)
 
     node_start, node_goal = np.random.choice(nodes, size=2)
 

@@ -2,7 +2,7 @@ from GLOBALS import *
 
 
 def distance_nodes(node1, node2):
-    return math.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
+    return np.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
 
 
 def distance_points(x1, y1, x2, y2):
