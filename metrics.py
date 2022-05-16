@@ -49,7 +49,7 @@ def get_tags(alg_list, other_tags=None):
     return tags
 
 
-class Plotter:
+class NeptunePlotter:
     """
     Neptune + final plots
     """

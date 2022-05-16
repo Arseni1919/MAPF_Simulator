@@ -1,5 +1,5 @@
 from GLOBALS import *
-from build_graph_from_map import build_graph_from_png
+from impl_graph_from_map import build_graph_from_png
 from simulator_objects import Agent
 from functions import *
 from simulator_objects import Node
@@ -34,6 +34,8 @@ def f_value(e):
 def gen_node(i_node, t):
     new_node = Node(i_node.ID, i_node.x, i_node.y, i_node.neighbours)
     new_node.t = t
+    # if i_node.x == 3 and i_node.y == 5:
+    #     print('stop')
     return new_node
 
 
@@ -46,12 +48,15 @@ def res_table_check(i_node, from_node, t, res_table, goal_pos_res_table, edge_re
         node_successors.append(gen_node(i_node, t))
 
 
-def ca_star(agents, nodes, nodes_dict):
+def ca_star(agents, nodes, nodes_dict, res_table_adding=None):
 
     res_table = []  # (x, y, time) - reservation table
     goal_pos_res_table = []
     edge_res_table = []
     paths = {}
+
+    if res_table_adding:
+        res_table.extend(res_table_adding)
 
     for agent in agents:
 
@@ -59,10 +64,11 @@ def ca_star(agents, nodes, nodes_dict):
         time_counter = 0
         curr_node = gen_node(agent.start, time_counter)
         curr_node.h = distance_nodes(curr_node, agent.goal)
+        agent.reset()
         agent.open_list.append(curr_node)
 
         while len(agent.open_list) > 0:
-            print(f'\r{agent.name} open: {len(agent.open_list)}', end='')
+            # print(f'\r{agent.name} open: {len(agent.open_list)}', end='')
             # Take node with the lowest f
             agent.open_list.sort(key=f_value)
             curr_node = agent.open_list.pop(0)
@@ -106,41 +112,6 @@ def ca_star(agents, nodes, nodes_dict):
     return paths
 
 
-def plot_paths(paths, nodes, nodes_dict):
-    max_length = max([len(path) for path in list(paths.values())])
-    fig, ax = plt.subplots()
-    markers = itertools.cycle(('o', '*', 'p', 'v', '^'))
-    marker_dict = {agent_name: next(markers) for agent_name in paths}
-
-    # plot field
-    field_x_items = [node.x for node in nodes]
-    field_y_items = [node.y for node in nodes]
-
-    for i_frame in range(max_length):
-        ax.clear()
-        # plot field
-        ax.scatter(field_x_items, field_y_items, marker='s', color='gray', s=100.0, alpha=0.1)
-        for node in nodes:
-            for nei in node.neighbours:
-                ax.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray', alpha=0.1)
-        # plot paths
-        for agent_name, path in paths.items():
-            x_items = [i[0] for i in path]
-            y_items = [i[1] for i in path]
-            ax.plot(x_items, y_items, linestyle='-', marker=marker_dict[agent_name], markersize=20.0, alpha=0.5)
-
-        for agent_name, path in paths.items():
-            if i_frame < len(path):
-                ax.text(path[i_frame][0], path[i_frame][1], f'{agent_name}',
-                        dict(size=5), bbox={'facecolor': 'yellow', 'alpha': 1, 'pad': 2})
-            else:
-                ax.text(path[-1][0], path[-1][1], f'{agent_name}',
-                        dict(size=5), bbox={'facecolor': 'yellow', 'alpha': 1, 'pad': 2})
-
-        plt.pause(1)
-    plt.show()
-
-
 def main():
     if with_seed:
         np.random.seed(seed)
@@ -159,17 +130,19 @@ def main():
     else:
         print(paths)
         plot_paths(paths, nodes, nodes_dict)
+        # plot_paths_plotly(paths, nodes, nodes_dict)
 
 
 if __name__ == '__main__':
-    n_agents = 1
-    # with_seed = False
-    with_seed = True
+    n_agents = 5
+    with_seed = False
+    # with_seed = True
     seed = 11
     # image_name = '10_10_random.png'
+    image_name = '9_10_no_obstacles.png'
     # image_name = '2_10_random.png'
     # image_name = '3_10_random.png'
-    image_name = 'den520d.png'
+    # image_name = 'den520d.png'
     main()
 
 
