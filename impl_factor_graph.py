@@ -37,7 +37,7 @@ def create_factor_graph(n_vars, start_nodes, goal_nodes, nodes, nodes_dict):
                 opt_counter += 1
                 another_path = possible_paths[var_node.name]
                 var_node.domain[f'opt_{opt_counter}'] = another_path
-        print(var_node.domain)
+        # print(var_node.domain)
 
     return var_nodes, func_nodes, graph
 
