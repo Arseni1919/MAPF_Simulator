@@ -5,7 +5,15 @@ from functions import *
 
 
 def check_validity(paths):
-    return None
+    big_list = []
+    for agent_name, path in paths.items():
+        big_list.extend(path)
+    counter_list = Counter(big_list)
+    pprint(counter_list)
+    solution_bool = len(big_list) == len(set(big_list))
+    # if len(big_list) != len(set(big_list)):
+    #     return None
+    return paths, solution_bool
 
 
 def run_max_sum(var_nodes, func_nodes, graph):
@@ -18,8 +26,8 @@ def run_max_sum(var_nodes, func_nodes, graph):
             func_node.send_messages(iteration)
     for var_node in var_nodes:
         paths[var_node.name] = var_node.get_path(num_of_iterations)
-    # paths = check_validity(paths)
-    return paths
+    paths, solution_bool = check_validity(paths)
+    return paths, solution_bool
 
 
 def main():
@@ -33,18 +41,14 @@ def main():
 
     var_nodes, func_nodes, graph = create_factor_graph(n_agents, start_nodes, goal_nodes, nodes, nodes_dict)
 
-    paths = run_max_sum(var_nodes, func_nodes, graph)  # paths: {'agent name': [(x, y, t), ...], ...}
+    paths, solution_bool = run_max_sum(var_nodes, func_nodes, graph)  # paths: {'agent name': [(x, y, t), ...], ...}
 
-    if paths is None:
-        print('No Solution')
-    else:
-        print(paths)
-        plot_paths(paths, nodes, nodes_dict)
-        # plot_paths_plotly(paths, nodes, nodes_dict)
+    print('There is Solution!😄') if solution_bool else print('No Solution ❌')
+    plot_paths(paths, nodes, nodes_dict)
 
 
 if __name__ == '__main__':
-    n_agents = 7
+    n_agents = 10
     with_seed = False
     # with_seed = True
     seed = 11

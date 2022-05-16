@@ -99,6 +99,16 @@ class NeptunePlotter:
         self.neptune_plot(update_dict)
 
 
+def plot_metrics(paths):
+    """
+    Metrics:
+    - running time
+    - memory
+    - solution length
+    - number of open nodes during the search
+    """
+    pass
+
 
 
 
