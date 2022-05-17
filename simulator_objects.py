@@ -59,14 +59,9 @@ class FGVarNode(Agent):
     def send_messages(self, iteration):
         iter_name = f'iter_{iteration}'
         message = {opt_name: 0 for opt_name, path in self.domain.items()}
-        if iteration == 0:
-            for to_func_node in self.nei_fg_func_nodes:
-                if iter_name not in to_func_node.messages:
-                    to_func_node.messages[iter_name] = {}
-                to_func_node.messages[iter_name][self.name] = message
-        else:
-            prev_messages = self.messages[f'iter_{iteration - 1}']
-            for to_func_node in self.nei_fg_func_nodes:
+        for to_func_node in self.nei_fg_func_nodes:
+            if iteration != 0:
+                prev_messages = self.messages[f'iter_{iteration - 1}']
 
                 # aggregate
                 for from_func_name, prev_message in prev_messages.items():
@@ -74,10 +69,14 @@ class FGVarNode(Agent):
                         for opt_name, _ in message.items():
                             message[opt_name] += prev_message[opt_name]
 
-                # insert
-                if iter_name not in to_func_node.messages:
-                    to_func_node.messages[iter_name] = {}
-                to_func_node.messages[iter_name][self.name] = message
+                # alpha correction
+                min_value = min(list(message.values()))
+                message = {opt_name: value - min_value for opt_name, value in message.items()}
+
+            # insert
+            if iter_name not in to_func_node.messages:
+                to_func_node.messages[iter_name] = {}
+            to_func_node.messages[iter_name][self.name] = message
 
     def get_path(self, iteration):
         total_values = {opt_name: 0 for opt_name, path in self.domain.items()}
@@ -117,9 +116,9 @@ class FGFuncNode:
                     row_values.append(cell_value + message_value)
                 message[opt_name_1] = min(row_values)
 
-            # alpha correction
-            min_value = min(list(message.values()))
-            message = {opt_name: value - min_value for opt_name, value in message.items()}
+            # # alpha correction
+            # min_value = min(list(message.values()))
+            # message = {opt_name: value - min_value for opt_name, value in message.items()}
 
             # insert
             if iter_name not in var_1.messages:
