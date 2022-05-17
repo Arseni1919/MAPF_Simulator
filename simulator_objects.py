@@ -117,8 +117,10 @@ class FGFuncNode:
                     row_values.append(cell_value + message_value)
                 message[opt_name_1] = min(row_values)
 
+            # alpha correction
             min_value = min(list(message.values()))
             message = {opt_name: value - min_value for opt_name, value in message.items()}
+
             # insert
             if iter_name not in var_1.messages:
                 var_1.messages[iter_name] = {}
