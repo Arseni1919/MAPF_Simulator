@@ -44,7 +44,7 @@ def main():
     paths, solution_bool = run_max_sum(var_nodes, func_nodes, graph)  # paths: {'agent name': [(x, y, t), ...], ...}
 
     print('There is Solution!😄') if solution_bool else print('No Solution ❌')
-    plot_paths(paths, nodes, nodes_dict)
+    plot_paths(paths, nodes, nodes_dict, plot_field=False)
 
 
 if __name__ == '__main__':
