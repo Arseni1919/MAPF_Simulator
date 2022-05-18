@@ -45,11 +45,11 @@ def main():
 
     print('There is Solution!😄') if solution_bool else print('No Solution ❌')
     # plot_paths(paths, nodes, nodes_dict, plot_field=False)
-    plot_paths(paths, nodes, nodes_dict, plot_field=True)
+    plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
 
 
 if __name__ == '__main__':
-    n_agents = 10
+    n_agents = 7
     with_seed = False
     # with_seed = True
     seed = 11

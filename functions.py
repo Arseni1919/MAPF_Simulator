@@ -9,7 +9,32 @@ def distance_points(x1, y1, x2, y2):
     return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
 
-def plot_paths(paths, nodes, nodes_dict, plot_field=True):
+def plot_paths_static(paths, nodes, nodes_dict, plot_field=True):
+    fig, ax = plt.subplots()
+    markers = itertools.cycle(('o', '*', 'p', 'v', '^'))
+    marker_dict = {agent_name: next(markers) for agent_name in paths}
+
+    # field positions
+    field_x_items = [node.x for node in nodes]
+    field_y_items = [node.y for node in nodes]
+
+    # plot field
+    if plot_field:
+        ax.scatter(field_x_items, field_y_items, marker='s', color='gray', s=100.0, alpha=0.1)
+        for node in nodes:
+            for nei in node.neighbours:
+                ax.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray',
+                        alpha=0.1)
+
+    # plot paths
+    for agent_name, path in paths.items():
+        x_items = [i[0] for i in path]
+        y_items = [i[1] for i in path]
+        ax.plot(x_items, y_items, linestyle='-', marker=marker_dict[agent_name], markersize=20.0, alpha=0.5)
+
+    plt.show()
+
+def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
     max_length = max([len(path) for path in list(paths.values())])
     fig, ax = plt.subplots()
     markers = itertools.cycle(('o', '*', 'p', 'v', '^'))

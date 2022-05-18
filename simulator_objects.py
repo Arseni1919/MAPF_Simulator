@@ -54,7 +54,12 @@ class FGVarNode(Agent):
         super(FGVarNode, self).__init__(agent_id, x, y, start, goal)
         self.nei_fg_func_nodes = []
         self.domain = {}
+        self.r_values = {}
         self.messages = {}
+
+    def add_to_domain(self, opt_name, path):
+        self.domain[opt_name] = path
+        self.r_values[opt_name] = random.random() / 1000
 
     def send_messages(self, iteration):
         iter_name = f'iter_{iteration}'
@@ -113,7 +118,9 @@ class FGFuncNode:
                 for opt_name_2, path_2 in var_2.domain.items():
                     cell_value = self.combine(path_1, path_2)
                     message_value = self.messages[iter_name][var_2.name][opt_name_2]
-                    row_values.append(cell_value + message_value)
+                    r_val_1 = var_1.r_values[opt_name_1]
+                    r_val_2 = var_2.r_values[opt_name_2]
+                    row_values.append(cell_value + message_value + r_val_1 + r_val_2)
                 message[opt_name_1] = min(row_values)
 
             # # alpha correction

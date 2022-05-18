@@ -70,12 +70,14 @@ def main():
     # image_name = 'den520d.png'
     # image_name = 'hrt201d.png'
     # image_name = 'Berlin_1_256.png'
-    image_name = '10_10_random.png'
+    # image_name = '10_10_random.png'
+    image_name = 'lak110d.png'
     nodes, nodes_dict = build_graph_from_png(image_name)
 
     node_start, node_goal = np.random.choice(nodes, size=2)
 
-    result = a_star(start=node_start, goal=node_goal, nodes=nodes)
+    # result = a_star(start=node_start, goal=node_goal, nodes=nodes)
+    result = None
 
     # PLOT RESULTS:
 

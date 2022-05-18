@@ -129,17 +129,19 @@ def main():
         print('No Solution')
     else:
         print(paths)
-        plot_paths(paths, nodes, nodes_dict)
+        # plot_paths_moving(paths, nodes, nodes_dict)
+        plot_paths_static(paths, nodes, nodes_dict)
         # plot_paths_plotly(paths, nodes, nodes_dict)
 
 
 if __name__ == '__main__':
-    n_agents = 5
+    n_agents = 1
     with_seed = False
     # with_seed = True
     seed = 11
     # image_name = '10_10_random.png'
-    image_name = '9_10_no_obstacles.png'
+    # image_name = '9_10_no_obstacles.png'
+    image_name = 'lak110d.png'
     # image_name = '2_10_random.png'
     # image_name = '3_10_random.png'
     # image_name = 'den520d.png'
