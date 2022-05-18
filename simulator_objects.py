@@ -105,8 +105,17 @@ class FGFuncNode:
     def combine(self, path_1, path_2):
         cell_value = len(path_1) + len(path_2)
         for step in path_1:
+
+            # vertex conflict
             if step in path_2:
                 return self.infinity
+
+            # final location conflict
+            # if (step[0], step[1]) == (path_2[-1][0], path_2[-1][1]):
+            #     return self.infinity
+
+            # edge conflict
+            # TODO
         return cell_value
 
     def send_messages(self, iteration):

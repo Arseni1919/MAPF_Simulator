@@ -49,7 +49,7 @@ def main():
 
 
 if __name__ == '__main__':
-    n_agents = 7
+    n_agents = 10
     with_seed = False
     # with_seed = True
     seed = 11

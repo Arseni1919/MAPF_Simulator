@@ -76,8 +76,8 @@ def main():
 
     node_start, node_goal = np.random.choice(nodes, size=2)
 
-    # result = a_star(start=node_start, goal=node_goal, nodes=nodes)
-    result = None
+    result = a_star(start=node_start, goal=node_goal, nodes=nodes)
+    # result = None
 
     # PLOT RESULTS:
 
