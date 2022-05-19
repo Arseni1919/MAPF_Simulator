@@ -48,17 +48,21 @@ def res_table_check(i_node, from_node, t, res_table, goal_pos_res_table, edge_re
         node_successors.append(gen_node(i_node, t))
 
 
-def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_adding=None):
+def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_adding=None, goal_pos_adding=None):
 
     res_table = []  # (x, y, time) - reservation table
-    goal_pos_res_table = []
-    edge_res_table = []
+    edge_res_table = []  # (x, y, x, y, t)
+    goal_pos_res_table = []  # (x, y)
     paths = {}
 
     if res_table_adding:
         res_table.extend(res_table_adding)
+
     if edge_res_table_adding:
         edge_res_table.extend(edge_res_table_adding)
+
+    if goal_pos_adding:
+        goal_pos_res_table.extend(goal_pos_adding)
 
     for agent in agents:
 

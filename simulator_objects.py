@@ -61,7 +61,11 @@ class LSNode(Agent):
         self.nodes_dict = nodes_dict
         self.a_star_func = a_star_func
         self.path = []
+        self.lr_path = []
         self.messages = {}
+        self.lr_messages = {}
+        self.infinity = 1e10
+        self.lr = self.infinity
 
     def init(self):
         self.path = self.a_star_func([self], self.nodes, self.nodes_dict)[self.name]
@@ -97,25 +101,75 @@ class LSNode(Agent):
             for next_pos in self.path[1:]:
                 edge = (next_pos[0], next_pos[1], curr_pos[0], curr_pos[1], next_pos[2])
                 if edge in edge_big_list:
-                    edge_to_add = (curr_pos[0], curr_pos[1], next_pos[0], next_pos[1], next_pos[2])
-                    # conf_list.append(edge_to_add)
                     conf_list.append(edge)
                 curr_pos = next_pos
 
         return conf_list
 
+    def get_conf_lists(self, paths):
+        paths = copy.deepcopy(paths)
+        paths = lengthen_paths(paths)
+        vertex_conf_list = self.count_vertex_conflicts(paths)
+        edge_conf_list = self.count_edge_conflicts(paths)
+        return vertex_conf_list, edge_conf_list
+
     def dsa_update_path(self, iteration):
         iter_name = f'iter_{iteration}'
-        last_messages = copy.deepcopy(self.messages[iter_name])
-        last_messages = lengthen_paths(last_messages)
-        vertex_conf_list = self.count_vertex_conflicts(last_messages)
-        edge_conf_list = self.count_edge_conflicts(last_messages)
+        last_messages = self.messages[iter_name]
+        vertex_conf_list, edge_conf_list = self.get_conf_lists(last_messages)
         if len(vertex_conf_list) + len(edge_conf_list) > 0:
             # dsa condition
             if random.random() < 0.8:
                 self.path = self.a_star_func([self], self.nodes, self.nodes_dict,
                                              vertex_conf_list, edge_conf_list)[self.name]
-                # vertex_conf_list = self.count_collisions(last_messages)
+                # vertex_conf_list, edge_conf_list = self.get_conf_lists(self.messages[iter_name])
+                # print('', end='')
+
+    def mgm_get_conf_lists(self, paths):
+        paths = copy.deepcopy(paths)
+        paths = lengthen_paths(paths)
+        # vertexes
+        vertex_conf_list, edge_conf_list = [], []
+        for agent_name, path in paths.items():
+            vertex_conf_list.extend(path)
+            if len(path) > 1:
+                curr_pos = path[0]
+                for next_pos in path[1:]:
+                    edge_conf_list.append((next_pos[0], next_pos[1], curr_pos[0], curr_pos[1], next_pos[2]))
+                    curr_pos = next_pos
+        return vertex_conf_list, edge_conf_list
+
+    def mgm_send_lr_messages(self, iteration):
+        iter_name = f'iter_{iteration}'
+        last_messages = self.messages[iter_name]
+
+        # calculate LR
+        self.lr = self.infinity
+        self.lr_path = self.path
+        vertex_conf_list, edge_conf_list = self.mgm_get_conf_lists(last_messages)
+        vertex_check, edge_check = self.get_conf_lists(last_messages)
+        if len(vertex_check) + len(edge_check) > 0:
+            self.lr_path = self.a_star_func([self], self.nodes, self.nodes_dict,
+                                            vertex_conf_list, edge_conf_list)[self.name]
+            self.lr = len(self.lr_path) - len(self.path)
+
+        # send LR messages
+        for nei in self.nei_nodes:
+            if iter_name not in nei.lr_messages:
+                nei.lr_messages[iter_name] = {}
+            nei.lr_messages[iter_name][self.name] = self.lr
+
+    def mgm_update_path(self, iteration):
+        iter_name = f'iter_{iteration}'
+        last_lr_messages = self.lr_messages[iter_name]
+        min_lr = min(list(last_lr_messages.values()))
+        min_lr_agents = [agent for agent in self.nei_nodes if last_lr_messages[agent.name] == min_lr]
+        min_lr_agents_index = min([agent.id for agent in min_lr_agents])
+        if self.lr < self.infinity:
+            if self.lr < min_lr or self.lr == min_lr and self.id < min_lr_agents_index:
+                self.path = self.lr_path
+                # vertex_conf_list, edge_conf_list = self.get_conf_lists(self.messages[iter_name])
+                print(f' mgm change - {self.name}')
 
 
 # Factor Graph Nodes

@@ -100,9 +100,11 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
 
     for i_frame in range(max_length * rate):
         ax.clear()
+        step = int(i_frame / rate)
 
         ax.set_xlabel('x')
         ax.set_ylabel('y')
+        ax.set_title(f'time: {step}')
         # plot field
         if plot_field:
             # nodes
@@ -120,7 +122,7 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
 
         # plot current position of an agent on a path
         for agent_name, path in paths.items():
-            step = int(i_frame / rate)
+
             if step < len(path)-1:
                 # x_pos = path[i_frame][0]
                 # y_pos = path[i_frame][1]
