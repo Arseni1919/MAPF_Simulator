@@ -34,6 +34,7 @@ def plot_paths_static(paths, nodes, nodes_dict, plot_field=True):
 
     plt.show()
 
+
 def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
     max_length = max([len(path) for path in list(paths.values())])
     fig, ax = plt.subplots()
@@ -52,10 +53,12 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
 
         # plot field
         if plot_field:
+            # nodes
             ax.scatter(field_x_items, field_y_items, marker='s', color='gray', s=100.0, alpha=0.1)
-            for node in nodes:
-                for nei in node.neighbours:
-                    ax.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray', alpha=0.1)
+            # edges
+            # for node in nodes:
+            #     for nei in node.neighbours:
+            #         ax.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray', alpha=0.1)
 
         # plot paths
         for agent_name, path in paths.items():
