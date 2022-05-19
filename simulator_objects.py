@@ -1,4 +1,7 @@
+import copy
+
 from GLOBALS import *
+from functions import get_collisions, lengthen_paths
 
 
 class Node:
@@ -49,6 +52,73 @@ class Agent:
         raise ValueError('no such ID - closed list')
 
 
+# Local Search Node
+class LSNode(Agent):
+    def __init__(self, agent_id, x=-1, y=-1, start=None, goal=None, nodes=None, nodes_dict=None, a_star_func=None):
+        super(LSNode, self).__init__(agent_id, x, y, start, goal)
+        self.nei_nodes = []
+        self.nodes = nodes
+        self.nodes_dict = nodes_dict
+        self.a_star_func = a_star_func
+        self.path = []
+        self.messages = {}
+
+    def init(self):
+        self.path = self.a_star_func([self], self.nodes, self.nodes_dict)[self.name]
+
+    def send_messages(self, iteration):
+        iter_name = f'iter_{iteration}'
+        for nei in self.nei_nodes:
+            if iter_name not in nei.messages:
+                nei.messages[iter_name] = {}
+            nei.messages[iter_name][self.name] = self.path
+
+    def count_vertex_conflicts(self, paths):
+        conf_list = []
+        for agent_name, path in paths.items():
+            for pos in self.path:
+                if pos in path:
+                    conf_list.append(pos)
+        return conf_list
+
+    def count_edge_conflicts(self, paths):
+        # build big list
+        edge_big_list = []
+        for agent_name, path in paths.items():
+            if len(path) > 1:
+                curr_pos = path[0]
+                for next_pos in path[1:]:
+                    edge_big_list.append((curr_pos[0], curr_pos[1], next_pos[0], next_pos[1], next_pos[2]))
+                    curr_pos = next_pos
+        # count conflicts
+        conf_list = []
+        if len(self.path) > 1:
+            curr_pos = self.path[0]
+            for next_pos in self.path[1:]:
+                edge = (next_pos[0], next_pos[1], curr_pos[0], curr_pos[1], next_pos[2])
+                if edge in edge_big_list:
+                    edge_to_add = (curr_pos[0], curr_pos[1], next_pos[0], next_pos[1], next_pos[2])
+                    # conf_list.append(edge_to_add)
+                    conf_list.append(edge)
+                curr_pos = next_pos
+
+        return conf_list
+
+    def dsa_update_path(self, iteration):
+        iter_name = f'iter_{iteration}'
+        last_messages = copy.deepcopy(self.messages[iter_name])
+        last_messages = lengthen_paths(last_messages)
+        vertex_conf_list = self.count_vertex_conflicts(last_messages)
+        edge_conf_list = self.count_edge_conflicts(last_messages)
+        if len(vertex_conf_list) + len(edge_conf_list) > 0:
+            # dsa condition
+            if random.random() < 0.8:
+                self.path = self.a_star_func([self], self.nodes, self.nodes_dict,
+                                             vertex_conf_list, edge_conf_list)[self.name]
+                # vertex_conf_list = self.count_collisions(last_messages)
+
+
+# Factor Graph Nodes
 class FGVarNode(Agent):
     def __init__(self, agent_id, x=-1, y=-1, start=None, goal=None):
         super(FGVarNode, self).__init__(agent_id, x, y, start, goal)

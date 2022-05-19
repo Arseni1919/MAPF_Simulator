@@ -48,7 +48,7 @@ def res_table_check(i_node, from_node, t, res_table, goal_pos_res_table, edge_re
         node_successors.append(gen_node(i_node, t))
 
 
-def ca_star(agents, nodes, nodes_dict, res_table_adding=None):
+def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_adding=None):
 
     res_table = []  # (x, y, time) - reservation table
     goal_pos_res_table = []
@@ -57,6 +57,8 @@ def ca_star(agents, nodes, nodes_dict, res_table_adding=None):
 
     if res_table_adding:
         res_table.extend(res_table_adding)
+    if edge_res_table_adding:
+        edge_res_table.extend(edge_res_table_adding)
 
     for agent in agents:
 
@@ -118,8 +120,7 @@ def main():
         random.seed(seed)
 
     nodes, nodes_dict = build_graph_from_png(image_name)
-    start_nodes = np.random.choice(nodes, size=n_agents)
-    goal_nodes = np.random.choice(nodes, size=n_agents)
+    start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
     agents = []
     for i in range(n_agents):
         agents.append(Agent(i, start=start_nodes[i], goal=goal_nodes[i]))
@@ -135,13 +136,13 @@ def main():
 
 
 if __name__ == '__main__':
-    n_agents = 1
+    n_agents = 7
     with_seed = False
     # with_seed = True
     seed = 11
-    # image_name = '10_10_random.png'
+    image_name = '10_10_random.png'
     # image_name = '9_10_no_obstacles.png'
-    image_name = 'lak110d.png'
+    # image_name = 'lak110d.png'
     # image_name = '2_10_random.png'
     # image_name = '3_10_random.png'
     # image_name = 'den520d.png'

@@ -9,6 +9,56 @@ def distance_points(x1, y1, x2, y2):
     return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
 
+def get_random_start_and_goal_positions(nodes, n_agents):
+    sampled_list = random.sample(nodes, n_agents * 2)
+    start_nodes = sampled_list[:n_agents]
+    goal_nodes = sampled_list[n_agents:]
+    print(f'start nodes: {[node.ID for node in start_nodes]}')
+    print(f'goal nodes: {[node.ID for node in goal_nodes]}')
+    return start_nodes, goal_nodes
+
+
+def lengthen_paths(paths):
+    max_len = sum([len(v) for k, v in paths.items()])
+
+    for agent_name, path in paths.items():
+        if len(path) < max_len:
+            difference = max_len - len(path)
+            adding = []
+            for i_diff in range(difference):
+                new_time = path[-1][2] + i_diff + 1
+                adding.append((path[-1][0], path[-1][1], new_time))
+            path.extend(adding)
+    return paths
+
+
+def get_collisions(paths):
+    big_list = []
+    for agent_name, path in paths.items():
+        big_list.extend(path)
+    counter_list = Counter(big_list)
+    no_collisions_bool = len(big_list) == len(set(big_list))
+    return counter_list, no_collisions_bool
+
+
+def get_num_of_collisions(collisions_counter):
+    collisions_dict = dict(collisions_counter)
+    collisions_dict = {k: v for k, v in collisions_dict.items() if v > 1}
+    n_col = sum(v for k, v in collisions_dict.items())
+    return n_col
+
+def check_validity(paths):
+    big_list = []
+    for agent_name, path in paths.items():
+        big_list.extend(path)
+    counter_list = Counter(big_list)
+    pprint(counter_list)
+    solution_bool = len(big_list) == len(set(big_list))
+    # if len(big_list) != len(set(big_list)):
+    #     return None
+    return paths, solution_bool
+
+
 def plot_paths_static(paths, nodes, nodes_dict, plot_field=True):
     fig, ax = plt.subplots()
     markers = itertools.cycle(('o', '*', 'p', 'v', '^'))
@@ -41,8 +91,8 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
     markers = itertools.cycle(('o', '*', 'p', 'v', '^'))
     marker_dict = {agent_name: next(markers) for agent_name in paths}
     # rate, pause = 1, 1
-    rate, pause = 5, 0.005
-    # rate, pause = 10, 0.005
+    # rate, pause = 5, 0.005
+    rate, pause = 10, 0.005
 
     # plot field
     field_x_items = [node.x for node in nodes]
@@ -51,6 +101,8 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
     for i_frame in range(max_length * rate):
         ax.clear()
 
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
         # plot field
         if plot_field:
             # nodes
