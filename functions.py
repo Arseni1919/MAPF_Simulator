@@ -47,6 +47,7 @@ def get_num_of_collisions(collisions_counter):
     n_col = sum(v for k, v in collisions_dict.items())
     return n_col
 
+
 def check_validity(paths):
     big_list = []
     for agent_name, path in paths.items():

@@ -117,13 +117,15 @@ class LSNode(Agent):
         iter_name = f'iter_{iteration}'
         last_messages = self.messages[iter_name]
         vertex_conf_list, edge_conf_list = self.get_conf_lists(last_messages)
+        if self.id == 7 and iteration == 4:
+            print('stop')
         if len(vertex_conf_list) + len(edge_conf_list) > 0:
             # dsa condition
             if random.random() < 0.8:
                 self.path = self.a_star_func([self], self.nodes, self.nodes_dict,
                                              vertex_conf_list, edge_conf_list)[self.name]
-                # vertex_conf_list, edge_conf_list = self.get_conf_lists(self.messages[iter_name])
-                # print('', end='')
+                vertex_conf_list, edge_conf_list = self.get_conf_lists(self.messages[iter_name])
+                print('', end='')
 
     def mgm_get_conf_lists(self, paths):
         paths = copy.deepcopy(paths)

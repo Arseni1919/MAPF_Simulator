@@ -44,7 +44,7 @@ def main():
 
 if __name__ == '__main__':
     n_agents = 10
-    n_iterations = 50
+    n_iterations = 100
     # with_seed = False
     with_seed = True
     seed = 804

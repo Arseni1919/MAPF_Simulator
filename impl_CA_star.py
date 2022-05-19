@@ -19,7 +19,7 @@ def update_res_tables(path, res_table, goal_pos_res_table, edge_res_table):
 def build_the_solution(agent, curr_node):
     if curr_node.ID == agent.goal.ID:
         path = [(curr_node.x, curr_node.y, curr_node.t)]
-        while curr_node.ID != agent.start.ID:
+        while curr_node.parent is not None:
             curr_node = curr_node.parent
             path.append((curr_node.x, curr_node.y, curr_node.t))
         path.reverse()
