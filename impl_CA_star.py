@@ -122,6 +122,7 @@ def main():
     if with_seed:
         np.random.seed(seed)
         random.seed(seed)
+        print(f'seed: {seed}')
 
     nodes, nodes_dict = build_graph_from_png(image_name)
     start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
@@ -130,21 +131,18 @@ def main():
         agents.append(Agent(i, start=start_nodes[i], goal=goal_nodes[i]))
     paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict)
 
-    if paths is None:
-        print('No Solution')
-    else:
-        print(paths)
-        # plot_paths_moving(paths, nodes, nodes_dict)
-        plot_paths_static(paths, nodes, nodes_dict)
-        # plot_paths_plotly(paths, nodes, nodes_dict)
+    paths, solution_bool = check_validity(paths)
+    print('There is Solution!😄') if solution_bool else print('No Solution ❌')
+    print(f'seed: {seed}')
+    plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
 
 
 if __name__ == '__main__':
-    n_agents = 7
-    with_seed = False
-    # with_seed = True
-    seed = 11
-    image_name = '10_10_random.png'
+    n_agents = 10
+    with_seed = True
+    seed = 6812
+    # seed = random.randint(0, 10000)
+    image_name = '19_20_warehouse.png'
     # image_name = '9_10_no_obstacles.png'
     # image_name = 'lak110d.png'
     # image_name = '2_10_random.png'

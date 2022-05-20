@@ -15,6 +15,7 @@ def run_dsa(agents_nodes):
             agent.dsa_update_path(iteration)
 
     # paths: {'agent name': [(x, y, t), ...], ...}
+    print()
     paths = {agent.name: agent.path for agent in agents_nodes}
     paths, solution_bool = check_validity(paths)
     return paths, solution_bool

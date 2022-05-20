@@ -99,15 +99,38 @@ class NeptunePlotter:
         self.neptune_plot(update_dict)
 
 
-def plot_metrics(paths):
+def plot_metrics_for_one_run(paths):
     """
     Metrics:
+    - solution length (SoC - sum of costs)
     - running time
     - memory
-    - solution length
     - number of open nodes during the search
     """
-    pass
+    # Some example data to display
+    x = np.linspace(0, 2 * np.pi, 400)
+    y = np.sin(x ** 2)
+
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8))
+
+    # SoC / makespan / fuel
+    ax1.plot(x, y)
+    ax1.set_title("main")
+
+    # running time
+    ax2.plot(x, y ** 2)
+    ax2.set_title("shares x with main")
+
+    # memory
+    ax3.plot(x + 1, y + 1)
+    ax3.set_title("unrelated")
+
+    # open nodes during the search
+    ax4.plot(x + 2, y + 2)
+    ax4.set_title("also unrelated")
+
+    # fig.tight_layout()
+    plt.show()
 
 
 
