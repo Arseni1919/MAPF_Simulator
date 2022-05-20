@@ -255,7 +255,7 @@ class FGFuncNode:
             #     return self.infinity
 
             # edge conflict
-            # TODO
+
         return cell_value
 
     def send_messages(self, iteration):

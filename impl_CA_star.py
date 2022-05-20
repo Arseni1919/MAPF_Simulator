@@ -126,9 +126,7 @@ def main():
 
     nodes, nodes_dict = build_graph_from_png(image_name)
     start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
-    agents = []
-    for i in range(n_agents):
-        agents.append(Agent(i, start=start_nodes[i], goal=goal_nodes[i]))
+    agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(n_agents)]
     paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict)
 
     paths, solution_bool = check_validity(paths)

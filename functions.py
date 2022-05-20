@@ -33,6 +33,29 @@ def lengthen_paths(paths):
     return long_paths
 
 
+def get_cost(paths, cost_type='soc'):
+
+    if cost_type == 'soc':
+        soc = 0
+        for agent_name, path in paths.items():
+            soc += len(path)
+        return soc
+
+    if cost_type == 'makespan':
+        makespan_list = [len(path) for name, path in paths.items()]
+        return max(makespan_list)
+
+    if cost_type == 'fuel':
+        fuel = 0
+        for agent_name, path in paths.items():
+            one_path = [(pos[0], pos[1]) for pos in path]
+            one_fuel_path = list(set(one_path))
+            fuel += len(one_fuel_path)
+        return fuel
+
+    return None
+
+
 def get_collisions(paths):
     big_list = []
     for agent_name, path in paths.items():
@@ -75,6 +98,7 @@ def check_validity(paths):
                 agent_edges_list.append((next_pos[0], next_pos[1], curr_pos[0], curr_pos[1], next_pos[2]))
                 agent_edges_list.append((curr_pos[0], curr_pos[1], next_pos[0], next_pos[1], next_pos[2]))
                 curr_pos = next_pos
+            # for waiting nodes
             big_edges_list.extend(list(set(agent_edges_list)))
     edges_bool = len(big_edges_list) == len(set(big_edges_list))
     pprint_counter(big_edges_list)

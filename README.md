@@ -4,7 +4,7 @@
 - [CA* (Silver)](impl_CA_star.py)
 - [DSA for MAPF](impl_dsa.py)
 - [MGM for MAPF](impl_mgm.py)
-
+- [CBS](impl_CBS.py)
 
 ## Credits
 
