@@ -2,6 +2,10 @@
 
 ## Algorithms
 
+- [DSA](impl_dsa.py)
+- [MGM](impl_mgm.py)
+
+
 ## Credits
 
 - [movingai.com | 2D Pathfinding Benchmarks](https://movingai.com/benchmarks/grids.html)
