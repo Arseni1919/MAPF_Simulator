@@ -72,10 +72,11 @@ def get_num_of_collisions(collisions_counter):
     return n_col
 
 
-def pprint_counter(big_list):
+def pprint_counter(big_list, title):
     counter_list = Counter(big_list)
     counter_dict = dict(counter_list)
     counter_dict = {k: v for k, v in counter_dict.items() if v > 1}
+    print(f'{title}:')
     pprint(counter_dict)
 
 
@@ -86,7 +87,7 @@ def check_validity(paths):
     for agent_name, path in long_paths.items():
         big_vertex_list.extend(path)
     vertices_bool = len(big_vertex_list) == len(set(big_vertex_list))
-    pprint_counter(big_vertex_list)
+    pprint_counter(big_vertex_list, 'Vertex Conf')
 
     # edges
     big_edges_list = []
@@ -101,7 +102,7 @@ def check_validity(paths):
             # for waiting nodes
             big_edges_list.extend(list(set(agent_edges_list)))
     edges_bool = len(big_edges_list) == len(set(big_edges_list))
-    pprint_counter(big_edges_list)
+    pprint_counter(big_edges_list, 'Edges Confs')
 
     solution_bool = vertices_bool and edges_bool
 
