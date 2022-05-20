@@ -24,6 +24,7 @@ def main():
     if with_seed:
         np.random.seed(seed)
         random.seed(seed)
+        print(f'seed: {seed}')
 
     nodes, nodes_dict = build_graph_from_png(IMAGE_NAME)
     start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
@@ -41,7 +42,8 @@ if __name__ == '__main__':
     n_iterations = 50
     # with_seed = False
     with_seed = True
-    seed = 616
+    seed = 6812
     # seed = random.randint(0, 10000)
-    IMAGE_NAME = '9_10_no_obstacles.png'
+    # IMAGE_NAME = '9_10_no_obstacles.png'
+    IMAGE_NAME = '19_20_warehouse.png'
     main()

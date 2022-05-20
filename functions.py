@@ -19,9 +19,10 @@ def get_random_start_and_goal_positions(nodes, n_agents):
 
 
 def lengthen_paths(paths):
-    max_len = sum([len(v) for k, v in paths.items()])
+    long_paths = copy.deepcopy(paths)
+    max_len = sum([len(v) for k, v in long_paths.items()])
 
-    for agent_name, path in paths.items():
+    for agent_name, path in long_paths.items():
         if len(path) < max_len:
             difference = max_len - len(path)
             adding = []
@@ -29,7 +30,7 @@ def lengthen_paths(paths):
                 new_time = path[-1][2] + i_diff + 1
                 adding.append((path[-1][0], path[-1][1], new_time))
             path.extend(adding)
-    return paths
+    return long_paths
 
 
 def get_collisions(paths):
@@ -48,15 +49,38 @@ def get_num_of_collisions(collisions_counter):
     return n_col
 
 
-def check_validity(paths):
-    big_list = []
-    for agent_name, path in paths.items():
-        big_list.extend(path)
+def pprint_counter(big_list):
     counter_list = Counter(big_list)
-    pprint(counter_list)
-    solution_bool = len(big_list) == len(set(big_list))
-    # if len(big_list) != len(set(big_list)):
-    #     return None
+    counter_dict = dict(counter_list)
+    counter_dict = {k: v for k, v in counter_dict.items() if v > 1}
+    pprint(counter_dict)
+
+
+def check_validity(paths):
+    long_paths = lengthen_paths(paths)
+    # vertices
+    big_vertex_list = []
+    for agent_name, path in long_paths.items():
+        big_vertex_list.extend(path)
+    vertices_bool = len(big_vertex_list) == len(set(big_vertex_list))
+    pprint_counter(big_vertex_list)
+
+    # edges
+    big_edges_list = []
+    for agent_name, path in paths.items():
+        if len(path) > 1:
+            curr_pos = path[0]
+            agent_edges_list = []
+            for next_pos in path[1:]:
+                agent_edges_list.append((next_pos[0], next_pos[1], curr_pos[0], curr_pos[1], next_pos[2]))
+                agent_edges_list.append((curr_pos[0], curr_pos[1], next_pos[0], next_pos[1], next_pos[2]))
+                curr_pos = next_pos
+            big_edges_list.extend(list(set(agent_edges_list)))
+    edges_bool = len(big_edges_list) == len(set(big_edges_list))
+    pprint_counter(big_edges_list)
+
+    solution_bool = vertices_bool and edges_bool
+
     return paths, solution_bool
 
 
@@ -106,6 +130,8 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_title(f'time: {step}')
+        ax.set_xticks(list(range(max(field_x_items) + 1)))
+        ax.set_yticks(list(range(max(field_y_items) + 1)))
         # plot field
         if plot_field:
             # nodes

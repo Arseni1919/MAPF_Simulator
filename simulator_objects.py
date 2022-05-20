@@ -106,33 +106,14 @@ class LSNode(Agent):
 
         return conf_list
 
-    def path_confs_with_others(self, paths):
-        paths = copy.deepcopy(paths)
+    def my_confs_with_others(self, paths):
         paths = lengthen_paths(paths)
         vertex_conf_list = self.count_vertex_conflicts(paths)
         edge_conf_list = self.count_edge_conflicts(paths)
         return vertex_conf_list, edge_conf_list
 
-    def dsa_update_path(self, iteration):
-        iter_name = f'iter_{iteration}'
-        last_messages = self.messages[iter_name]
-        vertex_conf_list, edge_conf_list = self.path_confs_with_others(last_messages)
-        other_vertexes, other_edges = self.paths_to_confs(last_messages)
-        vertex_conf_list.extend(other_vertexes)
-        edge_conf_list.extend(other_edges)
-        # if self.id == 7:
-        #     print('stop')
-        if len(vertex_conf_list) + len(edge_conf_list) > 0:
-            # dsa condition
-            if random.random() < 0.8:
-                self.path = self.a_star_func([self], self.nodes, self.nodes_dict,
-                                             vertex_conf_list, edge_conf_list)[self.name]
-                vertex_conf_list, edge_conf_list = self.path_confs_with_others(self.messages[iter_name])
-                print('', end='')
-
     @staticmethod
-    def paths_to_confs(paths):
-        paths = copy.deepcopy(paths)
+    def all_paths_to_confs(paths):
         paths = lengthen_paths(paths)
         # vertexes
         vertex_conf_list, edge_conf_list = [], []
@@ -145,6 +126,27 @@ class LSNode(Agent):
                     curr_pos = next_pos
         return vertex_conf_list, edge_conf_list
 
+    def dsa_update_path(self, iteration):
+        iter_name = f'iter_{iteration}'
+        last_messages = self.messages[iter_name]
+        vertex_conf_list, edge_conf_list = self.my_confs_with_others(last_messages)
+        other_vertexes, other_edges = self.all_paths_to_confs(last_messages)
+        vertex_conf_list.extend(other_vertexes)
+        edge_conf_list.extend(other_edges)
+        # if self.id == 7:
+        #     print('stop')
+        if len(vertex_conf_list) + len(edge_conf_list) > 0:
+            # dsa condition
+            if random.random() < 0.8:
+                new_path = self.a_star_func([self], self.nodes, self.nodes_dict,
+                                            vertex_conf_list, edge_conf_list)[self.name]
+                if new_path is not None:
+                    self.path = new_path
+                else:
+                    print(f'!!! No path was found for {self.name} in iteration {iteration}.')
+                # vertex_conf_list, edge_conf_list = self.my_confs_with_others(self.messages[iter_name])
+                # print('', end='')
+
     def mgm_send_lr_messages(self, iteration):
         iter_name = f'iter_{iteration}'
         last_messages = self.messages[iter_name]
@@ -152,16 +154,20 @@ class LSNode(Agent):
         # calculate LR
         self.lr = self.infinity
         self.lr_path = self.path
-        vertex_conf_list, edge_conf_list = self.paths_to_confs(last_messages)
-        vertex_check, edge_check = self.path_confs_with_others(last_messages)
+        vertex_conf_list, edge_conf_list = self.all_paths_to_confs(last_messages)
+        vertex_check, edge_check = self.my_confs_with_others(last_messages)
         vertex_conf_list.extend(vertex_check)
         edge_conf_list.extend(edge_check)
         if len(vertex_check) + len(edge_check) > 0:
             # if self.id == 7:
             #     print('stop')
-            self.lr_path = self.a_star_func([self], self.nodes, self.nodes_dict,
-                                            vertex_conf_list, edge_conf_list)[self.name]
-            self.lr = len(self.lr_path) - len(self.path)
+            new_path = self.a_star_func([self], self.nodes, self.nodes_dict,
+                                        vertex_conf_list, edge_conf_list)[self.name]
+            if new_path is not None:
+                self.lr_path = new_path
+                self.lr = len(self.lr_path) - len(self.path)
+            else:
+                print(f'!!! No path was found for {self.name} in iteration {iteration}.')
 
         # send LR messages
         for nei in self.nei_nodes:

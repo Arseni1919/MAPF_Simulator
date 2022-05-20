@@ -2,8 +2,8 @@
 
 ## Algorithms
 
-- [DSA](impl_dsa.py)
-- [MGM](impl_mgm.py)
+- [DSA for MAPF](impl_dsa.py)
+- [MGM for MAPF](impl_mgm.py)
 
 
 ## Credits
