@@ -8,6 +8,7 @@ def run_dsa(agents_nodes):
     for agent in agents_nodes:
         agent.init()
     for iteration in range(n_iterations):
+        print(f'\riteration: {iteration}', end='')
         for agent in agents_nodes:
             agent.send_messages(iteration)
         for agent in agents_nodes:
@@ -37,10 +38,10 @@ def main():
 
 if __name__ == '__main__':
     n_agents = 10
-    n_iterations = 100
+    n_iterations = 50
     # with_seed = False
     with_seed = True
-    seed = 804
-    # seed = random.randint(0, 1000)
+    seed = 616
+    # seed = random.randint(0, 10000)
     IMAGE_NAME = '9_10_no_obstacles.png'
     main()

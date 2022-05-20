@@ -106,7 +106,7 @@ class LSNode(Agent):
 
         return conf_list
 
-    def get_conf_lists(self, paths):
+    def path_confs_with_others(self, paths):
         paths = copy.deepcopy(paths)
         paths = lengthen_paths(paths)
         vertex_conf_list = self.count_vertex_conflicts(paths)
@@ -116,18 +116,22 @@ class LSNode(Agent):
     def dsa_update_path(self, iteration):
         iter_name = f'iter_{iteration}'
         last_messages = self.messages[iter_name]
-        vertex_conf_list, edge_conf_list = self.get_conf_lists(last_messages)
-        if self.id == 7 and iteration == 4:
-            print('stop')
+        vertex_conf_list, edge_conf_list = self.path_confs_with_others(last_messages)
+        other_vertexes, other_edges = self.paths_to_confs(last_messages)
+        vertex_conf_list.extend(other_vertexes)
+        edge_conf_list.extend(other_edges)
+        # if self.id == 7:
+        #     print('stop')
         if len(vertex_conf_list) + len(edge_conf_list) > 0:
             # dsa condition
             if random.random() < 0.8:
                 self.path = self.a_star_func([self], self.nodes, self.nodes_dict,
                                              vertex_conf_list, edge_conf_list)[self.name]
-                vertex_conf_list, edge_conf_list = self.get_conf_lists(self.messages[iter_name])
+                vertex_conf_list, edge_conf_list = self.path_confs_with_others(self.messages[iter_name])
                 print('', end='')
 
-    def mgm_get_conf_lists(self, paths):
+    @staticmethod
+    def paths_to_confs(paths):
         paths = copy.deepcopy(paths)
         paths = lengthen_paths(paths)
         # vertexes
@@ -148,9 +152,13 @@ class LSNode(Agent):
         # calculate LR
         self.lr = self.infinity
         self.lr_path = self.path
-        vertex_conf_list, edge_conf_list = self.mgm_get_conf_lists(last_messages)
-        vertex_check, edge_check = self.get_conf_lists(last_messages)
+        vertex_conf_list, edge_conf_list = self.paths_to_confs(last_messages)
+        vertex_check, edge_check = self.path_confs_with_others(last_messages)
+        vertex_conf_list.extend(vertex_check)
+        edge_conf_list.extend(edge_check)
         if len(vertex_check) + len(edge_check) > 0:
+            # if self.id == 7:
+            #     print('stop')
             self.lr_path = self.a_star_func([self], self.nodes, self.nodes_dict,
                                             vertex_conf_list, edge_conf_list)[self.name]
             self.lr = len(self.lr_path) - len(self.path)
@@ -171,7 +179,7 @@ class LSNode(Agent):
             if self.lr < min_lr or self.lr == min_lr and self.id < min_lr_agents_index:
                 self.path = self.lr_path
                 # vertex_conf_list, edge_conf_list = self.get_conf_lists(self.messages[iter_name])
-                print(f' mgm change - {self.name}')
+                # print(f' mgm change - {self.name}')
 
 
 # Factor Graph Nodes

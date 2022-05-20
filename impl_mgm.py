@@ -44,10 +44,10 @@ def main():
 
 if __name__ == '__main__':
     n_agents = 10
-    n_iterations = 100
+    n_iterations = 50
     # with_seed = False
     with_seed = True
-    seed = 804
-    # seed = random.randint(0, 1000)
+    seed = 616
+    # seed = random.randint(0, 10000)
     IMAGE_NAME = '9_10_no_obstacles.png'
     main()
