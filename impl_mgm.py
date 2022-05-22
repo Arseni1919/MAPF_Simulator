@@ -42,15 +42,15 @@ def main():
 
     print('There is Solution!😄') if solution_bool else print('No Solution ❌')
     print(f'seed: {seed}')
-    # plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
-    plot_metrics_for_one_run(paths)
+    plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
+    # plot_metrics_for_one_run(paths)
 
 
 if __name__ == '__main__':
-    n_agents = 10
+    n_agents = 13
     n_iterations = 5
     with_seed = True
-    seed = 6812
+    seed = 211
     # seed = random.randint(0, 10000)
     # IMAGE_NAME = '9_10_no_obstacles.png'
     IMAGE_NAME = '19_20_warehouse.png'

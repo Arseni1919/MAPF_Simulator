@@ -2,7 +2,7 @@ from GLOBALS import *
 from impl_graph_from_map import build_graph_from_png
 from functions import *
 from simulator_objects import Agent
-from impl_CA_star import ca_star
+from impl_CA_star import ca_star, a_star_xyt
 
 
 class CTNode:
@@ -12,12 +12,12 @@ class CTNode:
         self.nodes_dict = nodes_dict
 
         if vertex_conf:
-            self.vertex_conf = vertex_conf
+            self.vertex_conf = copy.deepcopy(vertex_conf)
         else:
             self.vertex_conf = {agent.name: [] for agent in agents}
 
         if edge_conf:
-            self.edge_conf = edge_conf
+            self.edge_conf = copy.deepcopy(edge_conf)
         else:
             self.edge_conf = {agent.name: [] for agent in agents}
 
@@ -27,37 +27,48 @@ class CTNode:
         self.parent = None
         self.children = None
 
-    def create_solution(self):
-        for agent in self.agents:
-            path = ca_star([agent], self.nodes, self.nodes_dict,
-                           self.vertex_conf[agent.name], self.edge_conf[agent.name])[agent.name]
-            if path is not None:
-                self.solution[agent.name] = path
-                self.cost = get_cost(self.solution)
-
     def insert_vertex_conf(self, vertex_dict):
         for name, conf in vertex_dict.items():
-            self.vertex_conf[name].append(conf)
+            if conf not in self.vertex_conf[name]:
+                self.vertex_conf[name].append(conf)
+            # else:
+            #     print('fuck')
 
     def insert_edge_conf(self, edge_dict):
         for name, conf in edge_dict.items():
-            self.edge_conf[name].append(conf)
+            if conf not in self.edge_conf[name]:
+                self.edge_conf[name].append(conf)
+            # else:
+            #     print('fuck')
+
+    def create_solution(self):
+        for agent in self.agents:
+            if agent.name == 'agent_8' and (12, 10, 6) in self.vertex_conf['agent_8']:
+                print('here')
+            path = a_star_xyt(agent, self.nodes, self.nodes_dict,
+                              self.vertex_conf[agent.name], self.edge_conf[agent.name])
+            if path is not None:
+                self.solution[agent.name] = path
+                self.cost = get_cost(self.solution)
 
 
 def get_edge_list(path):
     edges_list = []
     curr_pos = path[0]
-    for next_pos in path[:1]:
+    for next_pos in path[1:]:
         edges_list.append((curr_pos[0], curr_pos[1], next_pos[0], next_pos[1], next_pos[2]))
         curr_pos = next_pos
     return edges_list
 
 
 def validate_paths_until_first_conflict(node):
+    # print('start validating...')
     agents_names = list(node.solution.keys())
     long_paths = lengthen_paths(node.solution)
     for agent_name_1, agent_name_2 in combinations(agents_names, 2):
-
+        # if agent_name_1 == 'agent_8':
+        #     print(agent_name_1)
+        # print(agent_name_1, agent_name_2)
         # vertex
         path_1 = long_paths[agent_name_1]
         path_2 = long_paths[agent_name_2]
@@ -79,6 +90,7 @@ def validate_paths_until_first_conflict(node):
                 if reversed_edge in edges_list_2:
                     vertex_conf = None
                     edge_conf = (agent_name_1, agent_name_2), {agent_name_1: edge, agent_name_2: reversed_edge}
+                    # edge_conf = (agent_name_1, agent_name_2), {agent_name_1: reversed_edge, agent_name_2: edge}
                     return vertex_conf, edge_conf
     return None, None
 
@@ -93,9 +105,14 @@ def run_cbs(agents, nodes, nodes_dict):
         # best node
         open_list.sort(key=lambda x: x.cost)
         curr_node = open_list.pop(0)
+        # if len(open_list) > 72:
+            # print('here 1')
+        # if (12, 10, 6) in curr_node.vertex_conf['agent_8']:
+            # print('here 2')
 
         # validate
         vertex_conf, edge_conf = validate_paths_until_first_conflict(curr_node)
+        # print(f'\n---\nvertex: {vertex_conf}, \nedge: {edge_conf} \n ---')
         if vertex_conf is None and edge_conf is None:
             # return solution
             return curr_node.solution
@@ -114,7 +131,12 @@ def run_cbs(agents, nodes, nodes_dict):
 
                 # insert to open list
                 if new_node.cost < infinity:
+                    # print(f'node cost: {new_node.cost}')
                     open_list.append(new_node)
+                    # if len(open_list) > 73:
+                    #     print('###########')
+                    #     print(f'\n--- Curr node:\nvertex: {curr_node.vertex_conf}, \nedge: {curr_node.edge_conf} \n ---')
+                    #     print(f'\n--- New node:\nvertex: {new_node.vertex_conf}, \nedge: {new_node.edge_conf} \n ---')
 
         # EDGE CONFLICT
         if edge_conf is not None:
@@ -125,6 +147,7 @@ def run_cbs(agents, nodes, nodes_dict):
             for agent_name in agents_names_in_conflict:
                 new_node = CTNode(agents, nodes, nodes_dict, curr_node.vertex_conf, curr_node.edge_conf)
                 edge_dict = {agent_name: edge_conf_dict[agent_name]}
+                # print(edge_conf_dict[agent_name])
                 new_node.insert_edge_conf(edge_dict)
                 new_node.create_solution()
 
@@ -153,7 +176,7 @@ def main():
 
 
 if __name__ == '__main__':
-    n_agents = 10
+    n_agents = 13
     with_seed = True
     seed = 211
     # seed = random.randint(0, 10000)

@@ -42,21 +42,26 @@ def gen_node(i_node, t):
 def res_table_check(i_node, from_node, t, res_table, goal_pos_res_table, edge_res_table, node_successors):
     res_bool = (i_node.x, i_node.y, t) not in res_table
     goal_bool = (i_node.x, i_node.y) not in goal_pos_res_table
-    edge_bool = (i_node.x, i_node.y, from_node.x, from_node.y, t) not in edge_res_table
+    edge_bool_backwards = (i_node.x, i_node.y, from_node.x, from_node.y, t) not in edge_res_table
+    edge_bool_forward = (from_node.x, from_node.y, i_node.x, i_node.y, t) not in edge_res_table
     t_bool = t < 1e10
-    if res_bool and goal_bool and edge_bool and t_bool:
+    if res_bool and goal_bool and edge_bool_forward and edge_bool_backwards and t_bool:
         node_successors.append(gen_node(i_node, t))
+
+
+def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final_pos_conf=None):
+    return ca_star([agent], nodes, nodes_dict, vertex_conf, edge_conf, final_pos_conf)[agent.name]
 
 
 def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_adding=None, goal_pos_adding=None):
 
-    res_table = []  # (x, y, time) - reservation table
+    vertex_res_table = []  # (x, y, time) - reservation table
     edge_res_table = []  # (x, y, x, y, t)
     goal_pos_res_table = []  # (x, y)
     paths = {}
 
     if res_table_adding:
-        res_table.extend(res_table_adding)
+        vertex_res_table.extend(res_table_adding)
 
     if edge_res_table_adding:
         edge_res_table.extend(edge_res_table_adding)
@@ -81,26 +86,36 @@ def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_add
 
             # check if we found the solution
             if curr_node.ID == agent.goal.ID:
-                break
+                vertex_table_time_dict = {(pos[0], pos[1]): pos[2] for pos in vertex_res_table}
+                curr_node_pos = (curr_node.x, curr_node.y)
+                if curr_node_pos in vertex_table_time_dict:
+                    time_in_table = vertex_table_time_dict[curr_node_pos]
+                    if curr_node.t > time_in_table:
+                        break
+                else:
+                    break
+                # break
 
             # generate successors
             time_counter = curr_node.g + 1
             node_successors = []
             for nei in curr_node.neighbours:
-                res_table_check(nodes_dict[nei], curr_node, time_counter, res_table, goal_pos_res_table, edge_res_table, node_successors)
-            res_table_check(curr_node, curr_node, time_counter, res_table, goal_pos_res_table, edge_res_table, node_successors)
+                res_table_check(nodes_dict[nei], curr_node, time_counter, vertex_res_table, goal_pos_res_table, edge_res_table, node_successors)
+            res_table_check(curr_node, curr_node, time_counter, vertex_res_table, goal_pos_res_table, edge_res_table, node_successors)
 
             # loop on successors
             for i_successor in node_successors:
                 i_successor_curr_cost = curr_node.g + 1
+                # check in open list
                 if i_successor.ID in agent.open_list_names():
                     i_successor_in_open = agent.get_from_open_list(i_successor.ID)
                     if i_successor_in_open.g <= i_successor_curr_cost:
                         continue
-                elif i_successor.ID in agent.closed_list_names():
-                    i_successor_in_closed = agent.get_from_closed_list(i_successor.ID)
-                    if i_successor_in_closed.g <= i_successor_curr_cost:
-                        continue
+                # check in closed list
+                # elif i_successor.ID in agent.closed_list_names():
+                #     i_successor_in_closed = agent.get_from_closed_list(i_successor.ID)
+                #     if i_successor_in_closed.g <= i_successor_curr_cost:
+                #         continue
                 else:
                     agent.open_list.append(i_successor)
                     i_successor.h = distance_nodes(i_successor, agent.goal)
@@ -113,7 +128,7 @@ def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_add
         paths[agent.name] = build_the_solution(agent, curr_node)
         if paths[agent.name] is None:
             return None
-        update_res_tables(paths[agent.name], res_table, goal_pos_res_table, edge_res_table)
+        update_res_tables(paths[agent.name], vertex_res_table, goal_pos_res_table, edge_res_table)
 
     return paths
 
