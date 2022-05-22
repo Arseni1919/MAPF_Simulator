@@ -5,6 +5,13 @@ from simulator_objects import Agent
 from impl_CA_star import ca_star, a_star_xyt
 
 
+def calc_cbs(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):
+    agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(num_of_agents)]
+    paths = run_cbs(agents, nodes=nodes, nodes_dict=nodes_dict)
+    paths, solution_bool = check_validity(paths)
+    return paths, solution_bool
+
+
 class CTNode:
     def __init__(self, agents, nodes, nodes_dict, vertex_conf=None, edge_conf=None):
         self.agents = agents
@@ -43,8 +50,8 @@ class CTNode:
 
     def create_solution(self):
         for agent in self.agents:
-            if agent.name == 'agent_8' and (12, 10, 6) in self.vertex_conf['agent_8']:
-                print('here')
+            # if agent.name == 'agent_8' and (12, 10, 6) in self.vertex_conf['agent_8']:
+            #     print('here')
             path = a_star_xyt(agent, self.nodes, self.nodes_dict,
                               self.vertex_conf[agent.name], self.edge_conf[agent.name])
             if path is not None:
@@ -101,7 +108,7 @@ def run_cbs(agents, nodes, nodes_dict):
     root_node.create_solution()
     open_list = [root_node]
     while len(open_list) > 0:
-        print(f'\ropen list: {len(open_list)}', end='')
+        # print(f'\ropen list: {len(open_list)}', end='')
         # best node
         open_list.sort(key=lambda x: x.cost)
         curr_node = open_list.pop(0)

@@ -2,16 +2,21 @@ from GLOBALS import *
 from impl_graph_from_map import build_graph_from_png
 from functions import *
 from impl_local_search_graph import create_local_search_nodes
-from metrics import plot_metrics_for_one_run
 
 
-def run_mgm(agents_nodes):
-    print()
+def calc_mgm(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters):
+    agents_nodes = create_local_search_nodes(num_of_agents, start_nodes, goal_nodes, nodes, nodes_dict)
+    paths, solution_bool = run_mgm(agents_nodes, ls_iters)
+    return paths, solution_bool
+
+
+def run_mgm(agents_nodes, ls_iters=10):
+    # print()
     # initial path (a star)
     for agent in agents_nodes:
         agent.init()
-    for iteration in range(n_iterations):
-        print(f'\riteration: {iteration}', end='')
+    for iteration in range(ls_iters):
+        # print(f'\riteration: {iteration}', end='')
         # send paths
         for agent in agents_nodes:
             agent.send_messages(iteration)
@@ -23,7 +28,7 @@ def run_mgm(agents_nodes):
             agent.mgm_update_path(iteration)
 
     # paths: {'agent name': [(x, y, t), ...], ...}
-    print()
+    # print()
     paths = {agent.name: agent.path for agent in agents_nodes}
     paths, solution_bool = check_validity(paths)
     return paths, solution_bool
@@ -38,12 +43,11 @@ def main():
     nodes, nodes_dict = build_graph_from_png(IMAGE_NAME)
     start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
     agents_nodes = create_local_search_nodes(n_agents, start_nodes, goal_nodes, nodes, nodes_dict)
-    paths, solution_bool = run_mgm(agents_nodes)  # paths: {'agent name': [(x, y, t), ...], ...}
+    paths, solution_bool = run_mgm(agents_nodes, n_iterations)  # paths: {'agent name': [(x, y, t), ...], ...}
 
     print('There is Solution!😄') if solution_bool else print('No Solution ❌')
     print(f'seed: {seed}')
     plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
-    # plot_metrics_for_one_run(paths)
 
 
 if __name__ == '__main__':

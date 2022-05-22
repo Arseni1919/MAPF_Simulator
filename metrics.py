@@ -1,3 +1,5 @@
+import numpy as np
+
 from GLOBALS import *
 from functions import distance_points, distance_nodes
 
@@ -99,33 +101,52 @@ class NeptunePlotter:
         self.neptune_plot(update_dict)
 
 
-def plot_metrics_for_one_run(paths):
+def plot_metrics(from_n_agents, to_n_agents, soc_dict):
     """
     Metrics:
     - solution length (SoC - sum of costs)
     - running time
     - memory
     - number of open nodes during the search
+    # {alg_name: {n_agents: [list of metrics for every run]}}
     """
     # Some example data to display
-    x = np.linspace(0, 2 * np.pi, 400)
-    y = np.sin(x ** 2)
 
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8))
 
     # SoC / makespan / fuel
-    ax1.plot(x, y)
-    ax1.set_title("main")
+    for alg_name, n_dict in soc_dict.items():
+        x, y, std = [], [], []
+        for i in range(from_n_agents, to_n_agents + 1):
+            x.append(i)
+            y.append(np.mean(n_dict[i]))
+            std.append(np.std(n_dict[i]))
+
+        x = np.array(x)
+        y = np.array(y)
+        std = np.array(std)
+        ax1.plot(x, y, label=f'{alg_name}')
+        ax1.fill_between(x, y + std, y - std, alpha=0.2)
+        ax1.set_xticks(x)
+
+    ax1.set_title("SOC")
+    ax1.legend()
 
     # running time
+    x = np.linspace(0, 2 * np.pi, 400)
+    y = np.sin(x ** 2)
     ax2.plot(x, y ** 2)
     ax2.set_title("shares x with main")
 
     # memory
+    x = np.linspace(0, 2 * np.pi, 400)
+    y = np.sin(x ** 2)
     ax3.plot(x + 1, y + 1)
     ax3.set_title("unrelated")
 
     # open nodes during the search
+    x = np.linspace(0, 2 * np.pi, 400)
+    y = np.sin(x ** 2)
     ax4.plot(x + 2, y + 2)
     ax4.set_title("also unrelated")
 

@@ -138,10 +138,10 @@ class LSNode(Agent):
         if len(vertex_conf_list) + len(edge_conf_list) > 0:
             # dsa condition
             if random.random() < 0.8:
-                new_path = self.a_star_func([self], self.nodes, self.nodes_dict,
-                                            vertex_conf_list, edge_conf_list)[self.name]
-                if new_path is not None:
-                    self.path = new_path
+                a_star_func_output = self.a_star_func([self], self.nodes, self.nodes_dict,
+                                                      vertex_conf_list, edge_conf_list)
+                if a_star_func_output is not None:
+                    self.path = a_star_func_output[self.name]
                 else:
                     print(f'!!! No path was found for {self.name} in iteration {iteration}.')
                 # vertex_conf_list, edge_conf_list = self.my_confs_with_others(self.messages[iter_name])

@@ -13,8 +13,8 @@ def get_random_start_and_goal_positions(nodes, n_agents):
     sampled_list = random.sample(nodes, n_agents * 2)
     start_nodes = sampled_list[:n_agents]
     goal_nodes = sampled_list[n_agents:]
-    print(f'start nodes: {[node.ID for node in start_nodes]}')
-    print(f'goal nodes: {[node.ID for node in goal_nodes]}')
+    # print(f'start nodes: {[node.ID for node in start_nodes]}')
+    # print(f'goal nodes: {[node.ID for node in goal_nodes]}')
     return start_nodes, goal_nodes
 
 
@@ -87,7 +87,7 @@ def check_validity(paths):
     for agent_name, path in long_paths.items():
         big_vertex_list.extend(path)
     vertices_bool = len(big_vertex_list) == len(set(big_vertex_list))
-    pprint_counter(big_vertex_list, 'Vertex Conf')
+    # pprint_counter(big_vertex_list, 'Vertex Conf')
 
     # edges
     big_edges_list = []
@@ -102,7 +102,7 @@ def check_validity(paths):
             # for waiting nodes
             big_edges_list.extend(list(set(agent_edges_list)))
     edges_bool = len(big_edges_list) == len(set(big_edges_list))
-    pprint_counter(big_edges_list, 'Edges Confs')
+    # pprint_counter(big_edges_list, 'Edges Confs')
 
     solution_bool = vertices_bool and edges_bool
 

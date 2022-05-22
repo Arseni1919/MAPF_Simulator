@@ -5,6 +5,15 @@ from functions import *
 from simulator_objects import Node
 
 
+def calc_ca_star(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):
+    agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(num_of_agents)]
+    paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict, ca_star_bool=True)
+    if paths is not None:
+        paths, solution_bool = check_validity(paths)
+        return paths, solution_bool
+    return paths, False
+
+
 def update_res_tables(path, res_table, goal_pos_res_table, edge_res_table):
     if path is not None:
         res_table.extend(path)
@@ -53,7 +62,8 @@ def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final
     return ca_star([agent], nodes, nodes_dict, vertex_conf, edge_conf, final_pos_conf)[agent.name]
 
 
-def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_adding=None, goal_pos_adding=None):
+def ca_star(agents, nodes, nodes_dict,
+            res_table_adding=None, edge_res_table_adding=None, goal_pos_adding=None, ca_star_bool=False):
 
     vertex_res_table = []  # (x, y, time) - reservation table
     edge_res_table = []  # (x, y, x, y, t)
@@ -86,15 +96,17 @@ def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_add
 
             # check if we found the solution
             if curr_node.ID == agent.goal.ID:
-                vertex_table_time_dict = {(pos[0], pos[1]): pos[2] for pos in vertex_res_table}
-                curr_node_pos = (curr_node.x, curr_node.y)
-                if curr_node_pos in vertex_table_time_dict:
-                    time_in_table = vertex_table_time_dict[curr_node_pos]
-                    if curr_node.t > time_in_table:
-                        break
-                else:
+                if ca_star_bool:
                     break
-                # break
+                else:
+                    vertex_table_time_dict = {(pos[0], pos[1]): pos[2] for pos in vertex_res_table}
+                    curr_node_pos = (curr_node.x, curr_node.y)
+                    if curr_node_pos in vertex_table_time_dict:
+                        time_in_table = vertex_table_time_dict[curr_node_pos]
+                        if curr_node.t > time_in_table:
+                            break
+                    else:
+                        break
 
             # generate successors
             time_counter = curr_node.g + 1
@@ -112,10 +124,10 @@ def ca_star(agents, nodes, nodes_dict, res_table_adding=None, edge_res_table_add
                     if i_successor_in_open.g <= i_successor_curr_cost:
                         continue
                 # check in closed list
-                # elif i_successor.ID in agent.closed_list_names():
-                #     i_successor_in_closed = agent.get_from_closed_list(i_successor.ID)
-                #     if i_successor_in_closed.g <= i_successor_curr_cost:
-                #         continue
+                elif i_successor.ID in agent.closed_list_names() and ca_star_bool:
+                    i_successor_in_closed = agent.get_from_closed_list(i_successor.ID)
+                    if i_successor_in_closed.g <= i_successor_curr_cost:
+                        continue
                 else:
                     agent.open_list.append(i_successor)
                     i_successor.h = distance_nodes(i_successor, agent.goal)
