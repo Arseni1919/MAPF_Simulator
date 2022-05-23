@@ -2,7 +2,7 @@ from GLOBALS import *
 from impl_graph_from_map import build_graph_from_png
 from functions import *
 from simulator_objects import Agent
-from impl_CA_star import ca_star, a_star_xyt
+from impl_a_star_xyt import a_star_xyt
 
 
 def calc_cbs(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):

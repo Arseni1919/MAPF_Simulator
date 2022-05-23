@@ -101,7 +101,7 @@ class NeptunePlotter:
         self.neptune_plot(update_dict)
 
 
-def plot_metrics(from_n_agents, to_n_agents, soc_dict):
+def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict):
     """
     Metrics:
     - solution length (SoC - sum of costs)
@@ -110,8 +110,13 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict):
     - number of open nodes during the search
     # {alg_name: {n_agents: [list of metrics for every run]}}
     """
-    # Some example data to display
+    # to print:
+    for alg_name, n_dict in success_rate_dict.items():
+        print('---')
+        for i in range(from_n_agents, to_n_agents + 1):
+            print(f'{alg_name} for {i} agents: {sum(n_dict[i]) / len(n_dict[i]) * 100} %')
 
+    # to plot
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8))
 
     # SoC / makespan / fuel

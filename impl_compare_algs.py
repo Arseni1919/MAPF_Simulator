@@ -50,6 +50,8 @@ def main():
                 else:
                     paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes)
 
+                # for plots
+                success_rate_dict[alg_name][n_agents].append(solution_bool)
                 if solution_bool:
                     # paths: {'agent name': [(x, y, t), ...], ...}
                     soc_dict[alg_name][n_agents].append(sum([len(path) for path in list(paths.values())]))
@@ -57,13 +59,13 @@ def main():
                     print(f'\n[ERROR]: {alg_name} failed to solve!')
     print(f'seed: {seed}')
     print_time('Finish time')
-    plot_metrics(from_n_agents, to_n_agents, soc_dict)
+    plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict)
 
 
 if __name__ == '__main__':
     from_n_agents = 3
     # to_n_agents = 13
-    to_n_agents = 7
+    to_n_agents = 5
     k_runs = 20
     ls_iters = 20
 

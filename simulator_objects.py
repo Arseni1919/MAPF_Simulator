@@ -68,7 +68,7 @@ class LSNode(Agent):
         self.lr = self.infinity
 
     def init(self):
-        self.path = self.a_star_func([self], self.nodes, self.nodes_dict)[self.name]
+        self.path = self.a_star_func(self, self.nodes, self.nodes_dict)
 
     def send_messages(self, iteration):
         iter_name = f'iter_{iteration}'
@@ -138,10 +138,10 @@ class LSNode(Agent):
         if len(vertex_conf_list) + len(edge_conf_list) > 0:
             # dsa condition
             if random.random() < 0.8:
-                a_star_func_output = self.a_star_func([self], self.nodes, self.nodes_dict,
-                                                      vertex_conf_list, edge_conf_list)
-                if a_star_func_output is not None:
-                    self.path = a_star_func_output[self.name]
+                a_star_path = self.a_star_func(self, self.nodes, self.nodes_dict,
+                                               vertex_conf_list, edge_conf_list)
+                if a_star_path is not None:
+                    self.path = a_star_path
                 else:
                     print(f'!!! No path was found for {self.name} in iteration {iteration}.')
                 # vertex_conf_list, edge_conf_list = self.my_confs_with_others(self.messages[iter_name])
@@ -161,8 +161,8 @@ class LSNode(Agent):
         if len(vertex_check) + len(edge_check) > 0:
             # if self.id == 7:
             #     print('stop')
-            new_path = self.a_star_func([self], self.nodes, self.nodes_dict,
-                                        vertex_conf_list, edge_conf_list)[self.name]
+            new_path = self.a_star_func(self, self.nodes, self.nodes_dict,
+                                        vertex_conf_list, edge_conf_list)
             if new_path is not None:
                 self.lr_path = new_path
                 self.lr = len(self.lr_path) - len(self.path)

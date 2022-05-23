@@ -1,6 +1,6 @@
 from GLOBALS import *
 from simulator_objects import LSNode
-from impl_CA_star import ca_star
+from impl_a_star_xyt import a_star_xyt
 
 
 def create_local_search_nodes(n_vars, start_nodes, goal_nodes, nodes, nodes_dict):
@@ -9,7 +9,8 @@ def create_local_search_nodes(n_vars, start_nodes, goal_nodes, nodes, nodes_dict
 
     # create agents
     for i in range(n_vars):
-        var_node = LSNode(i, start=start_nodes[i], goal=goal_nodes[i], nodes=nodes, nodes_dict=nodes_dict, a_star_func=ca_star)
+        var_node = LSNode(i, start=start_nodes[i], goal=goal_nodes[i], nodes=nodes, nodes_dict=nodes_dict,
+                          a_star_func=a_star_xyt)
         agents_nodes.append(var_node)
         graph[var_node.name] = var_node
 
