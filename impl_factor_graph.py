@@ -1,6 +1,6 @@
 from GLOBALS import *
 from impl_graph_from_map import build_graph_from_png
-from impl_CA_star import ca_star
+from impl_a_star_xyt import a_star_xyt
 from simulator_objects import FGVarNode, FGFuncNode
 from functions import *
 
@@ -28,11 +28,11 @@ def create_factor_graph(n_vars, start_nodes, goal_nodes, nodes, nodes_dict):
 
     # create domains
     for var_node in var_nodes:
-        first_path = ca_star([var_node], nodes, nodes_dict)[var_node.name]
+        first_path = a_star_xyt(var_node, nodes, nodes_dict)
         opt_counter = 1
         var_node.add_to_domain(f'opt_{opt_counter}', first_path)
         for pos in first_path[1:]:
-            possible_paths = ca_star([var_node], nodes, nodes_dict, res_table_adding=[pos])
+            possible_paths = a_star_xyt(var_node, nodes, nodes_dict, vertex_conf=[pos])
             if possible_paths:
                 opt_counter += 1
                 another_path = possible_paths[var_node.name]

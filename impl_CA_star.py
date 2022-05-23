@@ -3,63 +3,16 @@ from impl_graph_from_map import build_graph_from_png
 from simulator_objects import Agent
 from functions import *
 from simulator_objects import Node
+from impl_a_star_xyt import update_res_tables, build_the_solution, f_value, gen_node, res_table_check
 
 
 def calc_ca_star(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):
     agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(num_of_agents)]
-    paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict, ca_star_bool=True)
+    paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict)
     if paths is not None:
         paths, solution_bool = check_validity(paths)
         return paths, solution_bool
     return paths, False
-
-
-def update_res_tables(path, res_table, goal_pos_res_table, edge_res_table):
-    if path is not None:
-        res_table.extend(path)
-        goal_pos_res_table.append((path[-1][0], path[-1][1]))
-    if len(path) > 2:
-        curr_step = path[0]
-        for i_step in path[1:]:
-            edge_res_table.append((curr_step[0], curr_step[1], i_step[0], i_step[1], i_step[2]))
-            curr_step = i_step
-
-
-def build_the_solution(agent, curr_node):
-    if curr_node.ID == agent.goal.ID:
-        path = [(curr_node.x, curr_node.y, curr_node.t)]
-        while curr_node.parent is not None:
-            curr_node = curr_node.parent
-            path.append((curr_node.x, curr_node.y, curr_node.t))
-        path.reverse()
-        return path
-    return None
-
-
-def f_value(e):
-    return e.f()
-
-
-def gen_node(i_node, t):
-    new_node = Node(i_node.ID, i_node.x, i_node.y, i_node.neighbours)
-    new_node.t = t
-    # if i_node.x == 3 and i_node.y == 5:
-    #     print('stop')
-    return new_node
-
-
-def res_table_check(i_node, from_node, t, res_table, goal_pos_res_table, edge_res_table, node_successors):
-    res_bool = (i_node.x, i_node.y, t) not in res_table
-    goal_bool = (i_node.x, i_node.y) not in goal_pos_res_table
-    edge_bool_backwards = (i_node.x, i_node.y, from_node.x, from_node.y, t) not in edge_res_table
-    edge_bool_forward = (from_node.x, from_node.y, i_node.x, i_node.y, t) not in edge_res_table
-    t_bool = t < 1e10
-    if res_bool and goal_bool and edge_bool_forward and edge_bool_backwards and t_bool:
-        node_successors.append(gen_node(i_node, t))
-
-
-# def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final_pos_conf=None):
-#     return ca_star([agent], nodes, nodes_dict, vertex_conf, edge_conf, final_pos_conf)[agent.name]
 
 
 def ca_star(agents, nodes, nodes_dict,
@@ -155,8 +108,8 @@ def main():
 if __name__ == '__main__':
     n_agents = 10
     with_seed = True
-    seed = 6812
-    # seed = random.randint(0, 10000)
+    # seed = 6812
+    seed = random.randint(0, 10000)
     image_name = '19_20_warehouse.png'
     # image_name = '9_10_no_obstacles.png'
     # image_name = 'lak110d.png'
@@ -165,14 +118,3 @@ if __name__ == '__main__':
     # image_name = 'den520d.png'
     main()
 
-
-# plt.scatter(x_items, y_items, marker='s', color='gray', s=100.0)
-# # plot paths
-# for agent_name, path in paths.items():
-#     x_items = [i[0] for i in path]
-#     y_items = [i[1] for i in path]
-#     plt.plot(x_items, y_items, linestyle='-', marker='p', markersize=20.0, alpha=0.5)
-#     plt.text(path[0][0], path[0][1], f'{agent_name}\nstart', dict(size=5), bbox={'facecolor': 'yellow', 'alpha': 1, 'pad': 2})
-#     plt.text(path[-1][0], path[-1][1], f'{agent_name}\ngoal', dict(size=5), bbox={'facecolor': 'yellow', 'alpha': 1, 'pad': 2})
-#
-# plt.show()

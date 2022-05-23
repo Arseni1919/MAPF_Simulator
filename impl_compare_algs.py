@@ -6,7 +6,7 @@ from impl_dsa import calc_dsa
 from impl_mgm import calc_mgm
 from impl_CBS import calc_cbs
 from metrics import plot_metrics
-
+from impl_save_metrics import save_metrics, load_metrics
 
 def print_time(title='time'):
     # time
@@ -35,23 +35,30 @@ def main():
 
     nodes, nodes_dict = build_graph_from_png(IMAGE_NAME)
     print_time('Start time')
+
     # n agents
     for n_agents in range(from_n_agents, to_n_agents + 1):
+
         # k different runs
         for i_problem in range(k_runs):
+
             start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
+
             # each algorithm
             for alg_name in algs_to_run:
-                print(f'\rn_agents: ({n_agents}/{to_n_agents}), run: ({i_problem}/{k_runs}), alg: {alg_name}', end='')
 
+                print(f'\rn_agents: ({n_agents}/{to_n_agents}), run: ({i_problem}/{k_runs}), alg: {alg_name}', end='')
+                start = time.time()
                 alg = algs_dict[alg_name]
                 if alg_name in ['dsa', 'mgm']:
                     paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters)
                 else:
                     paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes)
+                end = time.time()
 
                 # for plots
                 success_rate_dict[alg_name][n_agents].append(solution_bool)
+                running_time_dict[alg_name][n_agents].append(end - start)
                 if solution_bool:
                     # paths: {'agent name': [(x, y, t), ...], ...}
                     soc_dict[alg_name][n_agents].append(sum([len(path) for path in list(paths.values())]))
@@ -59,15 +66,17 @@ def main():
                     print(f'\n[ERROR]: {alg_name} failed to solve!')
     print(f'seed: {seed}')
     print_time('Finish time')
-    plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict)
+    file_name = save_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, running_time_dict)
+    from_n, to_n, soc_dict, success_rate_dict, running_time_dict = load_metrics(file_name)
+    plot_metrics(from_n, to_n, soc_dict, success_rate_dict, running_time_dict)
 
 
 if __name__ == '__main__':
-    from_n_agents = 3
+    from_n_agents = 2
     # to_n_agents = 13
-    to_n_agents = 5
-    k_runs = 20
-    ls_iters = 20
+    to_n_agents = 3
+    k_runs = 3
+    ls_iters = 5
 
     IMAGE_NAME = '19_20_warehouse.png'
     with_seed = True

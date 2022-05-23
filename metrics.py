@@ -101,7 +101,7 @@ class NeptunePlotter:
         self.neptune_plot(update_dict)
 
 
-def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict):
+def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, running_time_dict):
     """
     Metrics:
     - solution length (SoC - sum of costs)
@@ -114,7 +114,7 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict):
     for alg_name, n_dict in success_rate_dict.items():
         print('---')
         for i in range(from_n_agents, to_n_agents + 1):
-            print(f'{alg_name} for {i} agents: {sum(n_dict[i]) / len(n_dict[i]) * 100} %')
+            print(f'{alg_name} for {i} agents: {sum(n_dict[str(i)]) / len(n_dict[str(i)]) * 100: .2f} %')
 
     # to plot
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8))
@@ -124,8 +124,8 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict):
         x, y, std = [], [], []
         for i in range(from_n_agents, to_n_agents + 1):
             x.append(i)
-            y.append(np.mean(n_dict[i]))
-            std.append(np.std(n_dict[i]))
+            y.append(np.mean(n_dict[str(i)]))
+            std.append(np.std(n_dict[str(i)]))
 
         x = np.array(x)
         y = np.array(y)
@@ -133,15 +133,31 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict):
         ax1.plot(x, y, label=f'{alg_name}')
         ax1.fill_between(x, y + std, y - std, alpha=0.2)
         ax1.set_xticks(x)
-
-    ax1.set_title("SOC")
+    ax1.set_ylabel('sum of costs')
+    ax1.set_title("SoC")
     ax1.legend()
 
     # running time
-    x = np.linspace(0, 2 * np.pi, 400)
-    y = np.sin(x ** 2)
-    ax2.plot(x, y ** 2)
-    ax2.set_title("shares x with main")
+    for alg_name, n_dict in running_time_dict.items():
+        x, y, std = [], [], []
+        for i in range(from_n_agents, to_n_agents + 1):
+            x.append(i)
+            if alg_name in ['dsa', 'mgm']:
+                time_to_run_each_problem = np.array(n_dict[str(i)]) / i
+            else:
+                time_to_run_each_problem = np.array(n_dict[str(i)])
+            y.append(np.mean(time_to_run_each_problem))
+            std.append(np.std(time_to_run_each_problem))
+
+        x = np.array(x)
+        y = np.array(y)
+        std = np.array(std)
+        ax2.plot(x, y, label=f'{alg_name}')
+        ax2.fill_between(x, y + std, y - std, alpha=0.1)
+        ax2.set_xticks(x)
+    ax2.set_ylabel('running time')
+    ax2.set_title("Running Time")
+    ax2.legend()
 
     # memory
     x = np.linspace(0, 2 * np.pi, 400)
