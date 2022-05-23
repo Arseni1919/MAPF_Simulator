@@ -2,7 +2,7 @@ import numpy as np
 
 from GLOBALS import *
 from functions import distance_points, distance_nodes
-
+from impl_save_metrics import load_metrics
 
 def get_collisions(agents):
     count = 0
@@ -131,7 +131,7 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, runnin
         y = np.array(y)
         std = np.array(std)
         ax1.plot(x, y, label=f'{alg_name}')
-        ax1.fill_between(x, y + std, y - std, alpha=0.2)
+        ax1.fill_between(x, y + std, y - std, alpha=0.05)
         ax1.set_xticks(x)
     ax1.set_ylabel('sum of costs')
     ax1.set_title("SoC")
@@ -150,13 +150,13 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, runnin
             std.append(np.std(time_to_run_each_problem))
 
         x = np.array(x)
-        y = np.array(y)
-        std = np.array(std)
+        y = np.array(y) * 1000
         ax2.plot(x, y, label=f'{alg_name}')
-        ax2.fill_between(x, y + std, y - std, alpha=0.1)
+        # std = np.array(std) * 1000
+        # ax2.fill_between(x, y + std, y - std, alpha=0.1)
         ax2.set_xticks(x)
     ax2.set_ylabel('running time')
-    ax2.set_title("Running Time")
+    ax2.set_title("Running Time (milliseconds)")
     ax2.legend()
 
     # memory
@@ -175,5 +175,14 @@ def plot_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, runnin
     plt.show()
 
 
+def main():
+    from_n, to_n, soc_dict, success_rate_dict, running_time_dict = load_metrics(file_name)
+    plot_metrics(from_n, to_n, soc_dict, success_rate_dict, running_time_dict)
 
+
+if __name__ == '__main__':
+    file_name = 'logs_from_2022-05-23 12:53:21.935604.json'
+
+    file_name = f'logs_for_graphs/{file_name}'
+    main()
 

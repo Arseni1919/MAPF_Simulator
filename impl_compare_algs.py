@@ -5,7 +5,7 @@ from impl_CA_star import calc_ca_star
 from impl_dsa import calc_dsa
 from impl_mgm import calc_mgm
 from impl_CBS import calc_cbs
-from metrics import plot_metrics
+from impl_plot_metrics import plot_metrics
 from impl_save_metrics import save_metrics, load_metrics
 
 def print_time(title='time'):
@@ -72,10 +72,10 @@ def main():
 
 
 if __name__ == '__main__':
-    from_n_agents = 2
+    from_n_agents = 5
     # to_n_agents = 13
-    to_n_agents = 3
-    k_runs = 3
+    to_n_agents = 8
+    k_runs = 30
     ls_iters = 5
 
     IMAGE_NAME = '19_20_warehouse.png'
