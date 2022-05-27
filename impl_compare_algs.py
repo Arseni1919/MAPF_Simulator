@@ -76,10 +76,10 @@ def main():
 
 
 if __name__ == '__main__':
-    from_n_agents = 3
+    from_n_agents = 5
     # to_n_agents = 13
-    to_n_agents = 7
-    k_runs = 10
+    to_n_agents = 8
+    k_runs = 30
     ls_iters = 10
 
     # IMAGE_NAME = '19_20_warehouse.png'
