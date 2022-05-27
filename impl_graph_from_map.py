@@ -6,6 +6,23 @@ from functions import *
 from GLOBALS import *
 
 
+map_dimensions_dict = {
+    'lak108d.png': (26, 27),
+    'lak109d.png': (42, 33),
+    'lak110d.png': (21, 30),
+    'hrt201d.png': (272, 297),
+    'den520d.png': (257, 256),
+    'lak505d.png': (195, 194),
+    'Berlin_1_256.png': (256, 256),
+    '19_20_warehouse.png': (19, 20),
+    '10_10_random.png': (10, 10),
+    '9_10_no_obstacles.png': (9, 10),
+    '3_10_random.png': (3, 10),
+    '2_10_random.png': (2, 10),
+    'rmtst.png': (50, 182),
+}
+
+
 def set_nei(name_1, name_2, nodes_dict):
     if name_1 in nodes_dict and name_2 in nodes_dict and name_1 != name_2:
         node1 = nodes_dict[name_1]
@@ -17,7 +34,11 @@ def set_nei(name_1, name_2, nodes_dict):
 
 
 def build_graph_from_png(img_png, path='maps', show_map=False):
-    img_np = torchvision.io.read_image(f'{path}/{img_png}', ImageReadMode.GRAY).squeeze().numpy()
+    img_tensor = torchvision.io.read_image(f'{path}/{img_png}', ImageReadMode.GRAY)
+    if img_png in map_dimensions_dict:
+        img_np = T.Resize(size=map_dimensions_dict[img_png])(img_tensor).squeeze().numpy()
+    else:
+        img_np = img_tensor.squeeze().numpy()
     max_num = np.max(img_np)
     img_filtered_np = np.where(img_np < max_num, 0, 1)
 
@@ -71,20 +92,36 @@ def main():
     # image_name = 'hrt201d.png'
     # image_name = 'Berlin_1_256.png'
     # image_name = '10_10_random.png'
+    image_name = 'lak108d.png'
+    image_name = 'lak109d.png'
     image_name = 'lak110d.png'
+    image_name = 'hrt201d.png'
+    image_name = 'den520d.png'
+    image_name = 'lak505d.png'
+    image_name = '9_10_no_obstacles.png'
+    image_name = '19_20_warehouse.png'
+    image_name = 'rmtst.png'
     nodes, nodes_dict = build_graph_from_png(image_name)
 
     node_start, node_goal = np.random.choice(nodes, size=2)
 
+    result = None
     result = a_star(start=node_start, goal=node_goal, nodes=nodes)
-    # result = None
+    print('finished calculating path')
 
     # PLOT RESULTS:
 
-    # plot field
+    # plot nodes
     x_list = [node.x for node in nodes]
     y_list = [node.y for node in nodes]
-    plt.scatter(x_list, y_list)
+    print(f'max y: {max(y_list)}\n|\n|\n__ __ __ max x: {max(x_list)}')
+    print(f'n nodes: {len(nodes)}')
+    plt.scatter(x_list, y_list, marker='s', color='gray', s=2.0, alpha=0.1)
+
+    # plot edges
+    for node in nodes:
+        for nei in node.neighbours:
+            plt.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray', alpha=0.1)
 
     # plot found path
     if result is not None:

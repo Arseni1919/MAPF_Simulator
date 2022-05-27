@@ -51,11 +51,13 @@ def main():
 
 
 if __name__ == '__main__':
-    n_agents = 13
-    n_iterations = 5
+    n_agents = 7
+    n_iterations = 10
     with_seed = True
-    seed = 211
-    # seed = random.randint(0, 10000)
+    # seed = 211
+    seed = random.randint(0, 10000)
     # IMAGE_NAME = '9_10_no_obstacles.png'
-    IMAGE_NAME = '19_20_warehouse.png'
+    # IMAGE_NAME = '19_20_warehouse.png'
+    IMAGE_NAME = 'lak110d.png'
+    # IMAGE_NAME = 'lak110d.png'
     main()

@@ -4,6 +4,7 @@ from GLOBALS import *
 from functions import distance_points, distance_nodes
 from impl_save_metrics import load_metrics
 
+
 def get_collisions(agents):
     count = 0
     for agent1 in agents:
@@ -181,7 +182,7 @@ def main():
 
 
 if __name__ == '__main__':
-    file_name = 'logs_from_2022-05-23 12:53:21.935604.json'
+    file_name = '2022-05-24 15:25:05.397329_k_runs_3_algs__ca_star_dsa_mgm_cbs_map_10_10_random.json'
 
     file_name = f'logs_for_graphs/{file_name}'
     main()

@@ -1,7 +1,7 @@
 from GLOBALS import *
 
 
-def save_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, running_time_dict):
+def save_metrics(IMAGE_NAME, algs_to_run, k_runs, from_n_agents, to_n_agents, soc_dict, success_rate_dict, running_time_dict):
     big_dict = {
         'from_n_agents': from_n_agents,
         'to_n_agents': to_n_agents,
@@ -11,7 +11,10 @@ def save_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, runnin
     }
 
     time_now = datetime.now()
-    file_name = f"logs_for_graphs/logs_from_{time_now}.json"
+    algs_names = ''
+    for alg_name in algs_to_run:
+        algs_names += f'__{alg_name}'
+    file_name = f"logs_for_graphs/{time_now}_k_runs__{k_runs}_algs{algs_names}_map__{IMAGE_NAME[:-4]}.json"
     out_file = open(file_name, "w")
     json.dump(big_dict, out_file, indent=4)
     out_file.close()

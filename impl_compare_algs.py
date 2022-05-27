@@ -8,6 +8,7 @@ from impl_CBS import calc_cbs
 from impl_plot_metrics import plot_metrics
 from impl_save_metrics import save_metrics, load_metrics
 
+
 def print_time(title='time'):
     # time
     now = datetime.now()
@@ -54,6 +55,9 @@ def main():
                     paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters)
                 else:
                     paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes)
+                if solution_bool:
+                    print(f'\nalg: {alg_name}, SoC: {get_cost(paths)}')
+                    # plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
                 end = time.time()
 
                 # for plots
@@ -66,19 +70,22 @@ def main():
                     print(f'\n[ERROR]: {alg_name} failed to solve!')
     print(f'seed: {seed}')
     print_time('Finish time')
-    file_name = save_metrics(from_n_agents, to_n_agents, soc_dict, success_rate_dict, running_time_dict)
+    file_name = save_metrics(IMAGE_NAME, algs_to_run, k_runs, from_n_agents, to_n_agents, soc_dict, success_rate_dict, running_time_dict)
     from_n, to_n, soc_dict, success_rate_dict, running_time_dict = load_metrics(file_name)
     plot_metrics(from_n, to_n, soc_dict, success_rate_dict, running_time_dict)
 
 
 if __name__ == '__main__':
-    from_n_agents = 5
+    from_n_agents = 3
     # to_n_agents = 13
-    to_n_agents = 8
-    k_runs = 30
-    ls_iters = 5
+    to_n_agents = 7
+    k_runs = 10
+    ls_iters = 10
 
-    IMAGE_NAME = '19_20_warehouse.png'
+    # IMAGE_NAME = '19_20_warehouse.png'
+    # IMAGE_NAME = '10_10_random.png'
+    # IMAGE_NAME = 'rmtst.png'
+    IMAGE_NAME = 'lak110d.png'
     with_seed = True
     # seed = 211
     seed = random.randint(0, 10000)

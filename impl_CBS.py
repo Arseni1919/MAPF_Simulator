@@ -183,11 +183,12 @@ def main():
 
 
 if __name__ == '__main__':
-    n_agents = 13
+    n_agents = 5
     with_seed = True
-    seed = 211
+    seed = 3883
     # seed = random.randint(0, 10000)
-    image_name = '19_20_warehouse.png'
+    # image_name = '19_20_warehouse.png'
+    image_name = '10_10_random.png'
     # image_name = '9_10_no_obstacles.png'
     # image_name = 'lak110d.png'
     # image_name = '2_10_random.png'

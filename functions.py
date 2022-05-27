@@ -141,8 +141,9 @@ def plot_paths_moving(paths, nodes, nodes_dict, plot_field=True):
     markers = itertools.cycle(('o', '*', 'p', 'v', '^'))
     marker_dict = {agent_name: next(markers) for agent_name in paths}
     # rate, pause = 1, 1
+    rate, pause = 3, 0.005
     # rate, pause = 5, 0.005
-    rate, pause = 10, 0.005
+    # rate, pause = 10, 0.005
 
     # plot field
     field_x_items = [node.x for node in nodes]
