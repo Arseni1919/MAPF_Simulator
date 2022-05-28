@@ -56,8 +56,9 @@ def main():
                 else:
                     paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes)
                 if solution_bool:
-                    print(f'\nalg: {alg_name}, SoC: {get_cost(paths)}')
-                    # plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
+                    # print(f'\nalg: {alg_name}, SoC: {get_cost(paths)}')
+                    if to_plot:
+                        plot_paths_moving(paths, nodes, nodes_dict, plot_field=True)
                 end = time.time()
 
                 # for plots
@@ -78,7 +79,7 @@ def main():
 if __name__ == '__main__':
     from_n_agents = 5
     # to_n_agents = 13
-    to_n_agents = 8
+    to_n_agents = 7
     k_runs = 30
     ls_iters = 10
 
@@ -86,12 +87,17 @@ if __name__ == '__main__':
     # IMAGE_NAME = '10_10_random.png'
     # IMAGE_NAME = 'rmtst.png'
     IMAGE_NAME = 'lak110d.png'
+
+    # to_plot = True
+    to_plot = False
+
     with_seed = True
     # seed = 211
     seed = random.randint(0, 10000)
 
     # algorithms
-    algs_to_run = ['ca_star', 'dsa', 'mgm', 'cbs']
+    # algs_to_run = ['ca_star', 'dsa', 'mgm', 'cbs']
+    algs_to_run = ['ca_star', 'dsa', 'mgm']
     # algs_to_run = ['mgm']
     algs_dict = {
         'dsa': calc_dsa,
