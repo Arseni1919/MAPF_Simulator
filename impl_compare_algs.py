@@ -81,12 +81,14 @@ if __name__ == '__main__':
     # to_n_agents = 13
     to_n_agents = 7
     k_runs = 30
-    ls_iters = 10
+    ls_iters = 5
 
     # IMAGE_NAME = '19_20_warehouse.png'
     # IMAGE_NAME = '10_10_random.png'
-    # IMAGE_NAME = 'rmtst.png'
-    IMAGE_NAME = 'lak110d.png'
+    IMAGE_NAME = 'rmtst.png'
+    # IMAGE_NAME = 'lak110d.png'
+    # IMAGE_NAME = 'lak505d.png'
+    # IMAGE_NAME = 'den520d.png'
 
     # to_plot = True
     to_plot = False
