@@ -182,7 +182,10 @@ def main():
 
 
 if __name__ == '__main__':
-    file_name = '2022-05-24 15:25:05.397329_k_runs_3_algs__ca_star_dsa_mgm_cbs_map_10_10_random.json'
+    # file_name = '2022-05-29 10:00:39.516168_k_runs__20_algs__ca_star__dsa__mgm_map__rmtst.json'
+    # file_name = '2022-05-29 10:19:05.913659_k_runs__20_algs__ca_star__dsa__mgm_map__19_20_warehouse.json'
+    # file_name = '2022-05-29 10:23:18.514116_k_runs__20_algs__ca_star__dsa__mgm__cbs_map__19_20_warehouse.json'
+    file_name = '2022-05-29 11:13:54.144687_k_runs__20_algs__ca_star__dsa__mgm__cbs_map__lak108d.json'
 
     file_name = f'logs_for_graphs/{file_name}'
     main()
