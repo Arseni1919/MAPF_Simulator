@@ -11,3 +11,4 @@ lightning_logs
 example.ckpt
 .neptune
 logs_for_graphs
+heuristics

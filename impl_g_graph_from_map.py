@@ -14,6 +14,7 @@ map_dimensions_dict = {
     'lak110d.png': (21, 30),
     'hrt201d.png': (272, 297),
     'den520d.png': (257, 256),
+    'den101d.png': (41, 73),
     'lak505d.png': (195, 194),
     'Berlin_1_256.png': (256, 256),
     '19_20_warehouse.png': (19, 20),
@@ -99,20 +100,22 @@ def clear_nodes(nodes):
 def build_h_func(nodes, nodes_dict, image_name):
     # h_func[f'{node1.x}_{node1.y}'][f'{node2.x}_{node2.y}']
     print('Starting to create h_func..')
+    outfile = f'heuristics/{image_name[:-4]}.npy'
+    if exists(outfile):
+        print('Finished h_func.')
+        return np.load(outfile)
     # init h_func
-    # h_func = {}
-    # for i_1, node1 in enumerate(nodes):
-    #     print(f'\r{len(h_func)}', end='')
     x_dim, y_dim = map_dimensions_dict[image_name]
     h_func = np.zeros((x_dim, y_dim, x_dim, y_dim))
     print(f'nodes: {len(nodes)}')
     for i_1, node1 in enumerate(nodes):
+
         if i_1 % 50:
-            print(f'\r->{i_1}', end='')
+            print(f'\r->{i_1 + 1}', end='')
+        # run BFS
         clear_nodes(nodes)
         open_list = [node1]
         closed_list = []
-
         while len(open_list) > 0:
             curr_node = open_list.pop(0)
             if curr_node not in closed_list:
@@ -127,6 +130,7 @@ def build_h_func(nodes, nodes_dict, image_name):
                 # add current node to the closed list
                 closed_list.append(curr_node)
 
+    np.save(outfile, h_func)
     print('\nFinished h_func.')
     return h_func
 
