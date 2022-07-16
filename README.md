@@ -1,10 +1,10 @@
 # MAPF Simulator
 
 ## Algorithms
-- [CA* (Silver)](impl_CA_star.py)
-- [DSA for MAPF](impl_dsa.py)
-- [MGM for MAPF](impl_mgm.py)
-- [CBS](impl_CBS.py)
+- [CA* (Silver)](impl_alg_CA_star.py)
+- [DSA for MAPF](impl_alg_dsa.py)
+- [MGM for MAPF](impl_alg_mgm.py)
+- [CBS](impl_alg_CBS.py)
 
 ## Credits
 

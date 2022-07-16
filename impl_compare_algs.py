@@ -1,10 +1,10 @@
 from GLOBALS import *
 from functions import *
-from impl_graph_from_map import build_graph_from_png
-from impl_CA_star import calc_ca_star
-from impl_dsa import calc_dsa
-from impl_mgm import calc_mgm
-from impl_CBS import calc_cbs
+from impl_g_graph_from_map import build_graph_from_png
+from impl_alg_CA_star import calc_ca_star
+from impl_alg_dsa import calc_dsa
+from impl_alg_mgm import calc_mgm
+from impl_alg_CBS import calc_cbs
 from impl_plot_metrics import plot_metrics
 from impl_save_metrics import save_metrics, load_metrics
 
@@ -84,15 +84,15 @@ if __name__ == '__main__':
     ls_iters = 5
 
     # IMAGE_NAME = '19_20_warehouse.png'
-    IMAGE_NAME = 'lak108d.png'
+    # IMAGE_NAME = 'lak108d.png'
     # IMAGE_NAME = '10_10_random.png'
     # IMAGE_NAME = 'rmtst.png'
     # IMAGE_NAME = 'lak110d.png'
     # IMAGE_NAME = 'lak505d.png'
-    # IMAGE_NAME = 'den520d.png'
+    IMAGE_NAME = 'den520d.png'
 
-    # to_plot = True
-    to_plot = False
+    to_plot = True
+    # to_plot = False
 
     with_seed = True
     # seed = 211

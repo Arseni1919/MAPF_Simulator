@@ -1,6 +1,6 @@
 from GLOBALS import *
-from impl_graph_from_map import build_graph_from_png
-from impl_factor_graph import create_factor_graph
+from impl_g_graph_from_map import build_graph_from_png
+from impl_g_factor_graph import create_factor_graph
 from functions import *
 
 

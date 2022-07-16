@@ -1,5 +1,5 @@
 from GLOBALS import *
-from impl_graph_from_map import build_graph_from_png
+from impl_g_graph_from_map import build_graph_from_png
 from simulator_objects import Agent
 from functions import *
 from simulator_objects import Node
@@ -47,7 +47,7 @@ def res_table_check(i_node, from_node, t, res_table, goal_pos_res_table, edge_re
         node_successors.append(gen_node(i_node, t))
 
 
-def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final_pos_conf=None):
+def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final_pos_conf=None, h_func=None):
     vertex_res_table = []  # (x, y, time) - reservation table
     edge_res_table = []  # (x, y, x, y, t)
     goal_pos_res_table = []  # (x, y)
@@ -64,7 +64,7 @@ def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final
     # init
     time_counter = 0
     curr_node = gen_node(agent.start, time_counter)
-    curr_node.h = distance_nodes(curr_node, agent.goal)
+    curr_node.h = distance_nodes(curr_node, agent.goal, h_func)
     agent.reset()
     agent.open_list.append(curr_node)
 
@@ -109,7 +109,7 @@ def a_star_xyt(agent, nodes, nodes_dict, vertex_conf=None, edge_conf=None, final
             #         continue
             else:
                 agent.open_list.append(i_successor)
-                i_successor.h = distance_nodes(i_successor, agent.goal)
+                i_successor.h = distance_nodes(i_successor, agent.goal, h_func)
             i_successor.g = i_successor_curr_cost
             i_successor.parent = curr_node
 

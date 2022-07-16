@@ -1,5 +1,5 @@
 from GLOBALS import *
-from impl_graph_from_map import build_graph_from_png
+from impl_g_graph_from_map import build_graph_from_png
 from simulator_objects import Agent
 from functions import *
 from simulator_objects import Node

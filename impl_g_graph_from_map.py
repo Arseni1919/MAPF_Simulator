@@ -1,5 +1,7 @@
 import matplotlib.image
 import matplotlib.pyplot as plt
+import numpy as np
+
 from simulator_objects import Node
 from a_star import a_star
 from functions import *
@@ -84,6 +86,49 @@ def build_graph_from_np(img_np, show_map=False):
     # print('finished columns')
 
     return nodes, nodes_dict
+
+
+def clear_nodes(nodes):
+    for node in nodes:
+        node.parent = None
+        node.g = 0
+        node.h = 0
+        node.t = 0
+
+
+def build_h_func(nodes, nodes_dict, image_name):
+    # h_func[f'{node1.x}_{node1.y}'][f'{node2.x}_{node2.y}']
+    print('Starting to create h_func..')
+    # init h_func
+    # h_func = {}
+    # for i_1, node1 in enumerate(nodes):
+    #     print(f'\r{len(h_func)}', end='')
+    x_dim, y_dim = map_dimensions_dict[image_name]
+    h_func = np.zeros((x_dim, y_dim, x_dim, y_dim))
+    print(f'nodes: {len(nodes)}')
+    for i_1, node1 in enumerate(nodes):
+        if i_1 % 50:
+            print(f'\r->{i_1}', end='')
+        clear_nodes(nodes)
+        open_list = [node1]
+        closed_list = []
+
+        while len(open_list) > 0:
+            curr_node = open_list.pop(0)
+            if curr_node not in closed_list:
+                # update h_func
+                h_func[node1.x][node1.y][curr_node.x][curr_node.y] = curr_node.g
+                # h_func[curr_node.x][curr_node.y][node1.x][node1.y] = curr_node.g
+                # add new members to open list
+                for nei_name in curr_node.neighbours:
+                    nei_node = nodes_dict[nei_name]
+                    nei_node.g = curr_node.g + 1
+                    open_list.append(nei_node)
+                # add current node to the closed list
+                closed_list.append(curr_node)
+
+    print('\nFinished h_func.')
+    return h_func
 
 
 def main():

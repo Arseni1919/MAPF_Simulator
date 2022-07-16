@@ -1,8 +1,13 @@
 from GLOBALS import *
 
 
-def distance_nodes(node1, node2):
-    return np.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
+def distance_nodes(node1, node2, h_func: dict = None):
+    if h_func is None:
+        # print('regular distance')
+        return np.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
+    else:
+        heuristic_dist = h_func[node1.x][node1.y][node2.x][node2.y]
+        return heuristic_dist
 
 
 def distance_points(x1, y1, x2, y2):

@@ -1,5 +1,5 @@
 from GLOBALS import *
-from impl_graph_from_map import build_graph_from_png
+from impl_g_graph_from_map import build_graph_from_png, build_h_func
 from functions import *
 from simulator_objects import Agent
 from impl_a_star_xyt import a_star_xyt
@@ -48,12 +48,12 @@ class CTNode:
             # else:
             #     print('fuck')
 
-    def create_solution(self):
+    def create_solution(self, h_func=None):
         for agent in self.agents:
             # if agent.name == 'agent_8' and (12, 10, 6) in self.vertex_conf['agent_8']:
             #     print('here')
             path = a_star_xyt(agent, self.nodes, self.nodes_dict,
-                              self.vertex_conf[agent.name], self.edge_conf[agent.name])
+                              self.vertex_conf[agent.name], self.edge_conf[agent.name], h_func=h_func)
             if path is not None:
                 self.solution[agent.name] = path
                 self.cost = get_cost(self.solution)
@@ -102,10 +102,10 @@ def validate_paths_until_first_conflict(node):
     return None, None
 
 
-def run_cbs(agents, nodes, nodes_dict):
+def run_cbs(agents, nodes, nodes_dict, h_func=None):
     infinity = 1e10
     root_node = CTNode(agents, nodes, nodes_dict)
-    root_node.create_solution()
+    root_node.create_solution(h_func)
     open_list = [root_node]
     while len(open_list) > 0:
         # print(f'\ropen list: {len(open_list)}', end='')
@@ -134,7 +134,7 @@ def run_cbs(agents, nodes, nodes_dict):
                 new_node = CTNode(agents, nodes, nodes_dict, curr_node.vertex_conf, curr_node.edge_conf)
                 vertex_dict = {agent_name: pos}
                 new_node.insert_vertex_conf(vertex_dict)
-                new_node.create_solution()
+                new_node.create_solution(h_func)
 
                 # insert to open list
                 if new_node.cost < infinity:
@@ -156,7 +156,7 @@ def run_cbs(agents, nodes, nodes_dict):
                 edge_dict = {agent_name: edge_conf_dict[agent_name]}
                 # print(edge_conf_dict[agent_name])
                 new_node.insert_edge_conf(edge_dict)
-                new_node.create_solution()
+                new_node.create_solution(h_func)
 
                 # insert to open list
                 if new_node.cost < infinity:
@@ -172,9 +172,10 @@ def main():
         print(f'seed: {seed}')
 
     nodes, nodes_dict = build_graph_from_png(image_name)
+    h_func = build_h_func(nodes, nodes_dict, image_name)
     start_nodes, goal_nodes = get_random_start_and_goal_positions(nodes, n_agents)
     agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(n_agents)]
-    paths = run_cbs(agents, nodes=nodes, nodes_dict=nodes_dict)
+    paths = run_cbs(agents, nodes=nodes, nodes_dict=nodes_dict, h_func=h_func)
 
     paths, solution_bool = check_validity(paths)
     print('There is Solution!😄') if solution_bool else print('No Solution ❌')
@@ -188,9 +189,12 @@ if __name__ == '__main__':
     seed = 3883
     # seed = random.randint(0, 10000)
     # image_name = '19_20_warehouse.png'
-    image_name = '10_10_random.png'
+    # image_name = '10_10_random.png'
     # image_name = '9_10_no_obstacles.png'
     # image_name = 'lak110d.png'
+    # image_name = 'lak505d.png'
+    # image_name = 'lak109d.png'
+    image_name = 'rmtst.png'
     # image_name = '2_10_random.png'
     # image_name = '3_10_random.png'
     # image_name = 'den520d.png'

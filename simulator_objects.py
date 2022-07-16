@@ -9,6 +9,7 @@ class Node:
         self.ID = ID
         self.x = x
         self.y = y
+        self.name = f'{self.x}_{self.y}'
         self.neighbours = neighbours
         self.parent = None
         self.g = 0
