@@ -7,6 +7,7 @@ def distance_nodes(node1, node2, h_func: dict = None):
         return np.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
     else:
         heuristic_dist = h_func[node1.x][node1.y][node2.x][node2.y]
+        # direct_dist = np.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
         return heuristic_dist
 
 
@@ -25,7 +26,7 @@ def get_random_start_and_goal_positions(nodes, n_agents):
 
 def lengthen_paths(paths):
     long_paths = copy.deepcopy(paths)
-    max_len = sum([len(v) for k, v in long_paths.items()])
+    max_len = max([len(v) for k, v in long_paths.items()])
 
     for agent_name, path in long_paths.items():
         if len(path) < max_len:

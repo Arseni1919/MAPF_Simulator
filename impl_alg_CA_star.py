@@ -3,12 +3,12 @@ from impl_g_graph_from_map import build_graph_from_png
 from simulator_objects import Agent
 from functions import *
 from simulator_objects import Node
-from impl_a_star_xyt import update_res_tables, build_the_solution, f_value, gen_node, res_table_check
+from impl_a_star_xyt import update_res_tables, build_the_solution, f_value, gen_node, check_conf_and_add
 
 
-def calc_ca_star(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):
+def calc_ca_star(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes, h_func=None):
     agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(num_of_agents)]
-    paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict)
+    paths = ca_star(agents, nodes=nodes, nodes_dict=nodes_dict, h_func=h_func)
     if paths is not None:
         paths, solution_bool = check_validity(paths)
         return paths, solution_bool
@@ -16,7 +16,7 @@ def calc_ca_star(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):
 
 
 def ca_star(agents, nodes, nodes_dict,
-            res_table_adding=None, edge_res_table_adding=None, goal_pos_adding=None):
+            res_table_adding=None, edge_res_table_adding=None, goal_pos_adding=None, h_func=None):
 
     vertex_res_table = []  # (x, y, time) - reservation table
     edge_res_table = []  # (x, y, x, y, t)
@@ -37,7 +37,7 @@ def ca_star(agents, nodes, nodes_dict,
         # init
         time_counter = 0
         curr_node = gen_node(agent.start, time_counter)
-        curr_node.h = distance_nodes(curr_node, agent.goal)
+        curr_node.h = distance_nodes(curr_node, agent.goal, h_func=h_func)
         agent.reset()
         agent.open_list.append(curr_node)
 
@@ -55,25 +55,25 @@ def ca_star(agents, nodes, nodes_dict,
             time_counter = curr_node.g + 1
             node_successors = []
             for nei in curr_node.neighbours:
-                res_table_check(nodes_dict[nei], curr_node, time_counter, vertex_res_table, goal_pos_res_table, edge_res_table, node_successors)
-            res_table_check(curr_node, curr_node, time_counter, vertex_res_table, goal_pos_res_table, edge_res_table, node_successors)
+                check_conf_and_add(nodes_dict[nei], curr_node, time_counter, vertex_res_table, goal_pos_res_table, edge_res_table, node_successors)
+            check_conf_and_add(curr_node, curr_node, time_counter, vertex_res_table, goal_pos_res_table, edge_res_table, node_successors)
 
             # loop on successors
             for i_successor in node_successors:
                 i_successor_curr_cost = curr_node.g + 1
                 # check in open list
-                if i_successor.ID in agent.open_list_names():
-                    i_successor_in_open = agent.get_from_open_list(i_successor.ID)
+                if i_successor.name in agent.open_list_names():
+                    i_successor_in_open = agent.get_from_open_list(i_successor.name)
                     if i_successor_in_open.g <= i_successor_curr_cost:
                         continue
                 # check in closed list
-                elif i_successor.ID in agent.closed_list_names():
-                    i_successor_in_closed = agent.get_from_closed_list(i_successor.ID)
+                elif i_successor.name in agent.closed_list_names():
+                    i_successor_in_closed = agent.get_from_closed_list(i_successor.name)
                     if i_successor_in_closed.g <= i_successor_curr_cost:
                         continue
                 else:
                     agent.open_list.append(i_successor)
-                    i_successor.h = distance_nodes(i_successor, agent.goal)
+                    i_successor.h = distance_nodes(i_successor, agent.goal, h_func)
                 i_successor.g = i_successor_curr_cost
                 i_successor.parent = curr_node
 

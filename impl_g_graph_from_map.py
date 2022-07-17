@@ -97,14 +97,7 @@ def clear_nodes(nodes):
         node.t = 0
 
 
-def build_h_func(nodes, nodes_dict, image_name):
-    # h_func[f'{node1.x}_{node1.y}'][f'{node2.x}_{node2.y}']
-    print('Starting to create h_func..')
-    outfile = f'heuristics/{image_name[:-4]}.npy'
-    if exists(outfile):
-        print('Finished h_func.')
-        return np.load(outfile)
-    # init h_func
+def create_direct_h_bfs_dist(image_name, nodes, nodes_dict):
     x_dim, y_dim = map_dimensions_dict[image_name]
     h_func = np.zeros((x_dim, y_dim, x_dim, y_dim))
     print(f'nodes: {len(nodes)}')
@@ -129,6 +122,19 @@ def build_h_func(nodes, nodes_dict, image_name):
                     open_list.append(nei_node)
                 # add current node to the closed list
                 closed_list.append(curr_node)
+    return h_func
+
+
+def build_h_func(nodes, nodes_dict, image_name):
+    # h_func[f'{node1.x}_{node1.y}'][f'{node2.x}_{node2.y}']
+    print('Starting to create h_func..')
+    outfile = f'heuristics/{image_name[:-4]}.npy'
+    if exists(outfile):
+        print('Finished h_func.')
+        return np.load(outfile)
+
+    # init h_func with BFS
+    h_func = create_direct_h_bfs_dist(image_name, nodes, nodes_dict)
 
     np.save(outfile, h_func)
     print('\nFinished h_func.')

@@ -35,20 +35,20 @@ class Agent:
         self.closed_list = []
 
     def open_list_names(self):
-        return [node.ID for node in self.open_list]
+        return [node.name for node in self.open_list]
 
     def closed_list_names(self):
-        return [node.ID for node in self.closed_list]
+        return [node.name for node in self.closed_list]
 
     def get_from_open_list(self, name):
         for node in self.open_list:
-            if node.ID == name:
+            if node.name == name:
                 return node
         raise ValueError('no such ID - open list')
 
     def get_from_closed_list(self, name):
         for node in self.closed_list:
-            if node.ID == name:
+            if node.name == name:
                 return node
         raise ValueError('no such ID - closed list')
 
@@ -68,8 +68,8 @@ class LSNode(Agent):
         self.infinity = 1e10
         self.lr = self.infinity
 
-    def init(self):
-        self.path = self.a_star_func(self, self.nodes, self.nodes_dict)
+    def init(self, h_func):
+        self.path = self.a_star_func(self, self.nodes, self.nodes_dict, h_func=h_func)
 
     def send_messages(self, iteration):
         iter_name = f'iter_{iteration}'
@@ -108,18 +108,23 @@ class LSNode(Agent):
         return conf_list
 
     def my_confs_with_others(self, paths):
-        paths = lengthen_paths(paths)
-        vertex_conf_list = self.count_vertex_conflicts(paths)
+        l_paths = lengthen_paths(paths)
+        vertex_conf_list = self.count_vertex_conflicts(l_paths)
         edge_conf_list = self.count_edge_conflicts(paths)
+        if len(edge_conf_list) > 0:
+            pass
         return vertex_conf_list, edge_conf_list
 
     @staticmethod
     def all_paths_to_confs(paths):
-        paths = lengthen_paths(paths)
+        l_paths = lengthen_paths(paths)
         # vertexes
         vertex_conf_list, edge_conf_list = [], []
-        for agent_name, path in paths.items():
+        # VERTEX CONF
+        for agent_name, path in l_paths.items():
             vertex_conf_list.extend(path)
+        # EDGE CONF
+        for agent_name, path in paths.items():
             if len(path) > 1:
                 curr_pos = path[0]
                 for next_pos in path[1:]:
@@ -127,7 +132,7 @@ class LSNode(Agent):
                     curr_pos = next_pos
         return vertex_conf_list, edge_conf_list
 
-    def dsa_update_path(self, iteration):
+    def dsa_update_path(self, iteration, h_func=None):
         iter_name = f'iter_{iteration}'
         last_messages = self.messages[iter_name]
         vertex_conf_list, edge_conf_list = self.my_confs_with_others(last_messages)
@@ -140,7 +145,7 @@ class LSNode(Agent):
             # dsa condition
             if random.random() < 0.8:
                 a_star_path = self.a_star_func(self, self.nodes, self.nodes_dict,
-                                               vertex_conf_list, edge_conf_list)
+                                               vertex_conf_list, edge_conf_list, h_func=h_func)
                 if a_star_path is not None:
                     self.path = a_star_path
                 else:
@@ -148,22 +153,22 @@ class LSNode(Agent):
                 # vertex_conf_list, edge_conf_list = self.my_confs_with_others(self.messages[iter_name])
                 # print('', end='')
 
-    def mgm_send_lr_messages(self, iteration):
+    def mgm_send_lr_messages(self, iteration, h_func=None):
         iter_name = f'iter_{iteration}'
         last_messages = self.messages[iter_name]
 
         # calculate LR
         self.lr = self.infinity
         self.lr_path = self.path
-        vertex_conf_list, edge_conf_list = self.all_paths_to_confs(last_messages)
-        vertex_check, edge_check = self.my_confs_with_others(last_messages)
-        vertex_conf_list.extend(vertex_check)
-        edge_conf_list.extend(edge_check)
-        if len(vertex_check) + len(edge_check) > 0:
+        vertex_conf_list, edge_conf_list = self.my_confs_with_others(last_messages)
+        other_vertexes, other_edges = self.all_paths_to_confs(last_messages)
+        vertex_conf_list.extend(other_vertexes)
+        edge_conf_list.extend(other_edges)
+        if len(vertex_conf_list) + len(edge_conf_list) > 0:
             # if self.id == 7:
             #     print('stop')
             new_path = self.a_star_func(self, self.nodes, self.nodes_dict,
-                                        vertex_conf_list, edge_conf_list)
+                                        vertex_conf_list, edge_conf_list, h_func=h_func)
             if new_path is not None:
                 self.lr_path = new_path
                 self.lr = len(self.lr_path) - len(self.path)
@@ -233,6 +238,7 @@ class FGVarNode(Agent):
         return self.domain[min_opt_name]
 
 
+# Factor Graph Nodes
 class FGFuncNode:
     def __init__(self, nei_fg_var_nodes):
         self.nei_fg_var_nodes = nei_fg_var_nodes

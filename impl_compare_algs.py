@@ -1,6 +1,6 @@
 from GLOBALS import *
 from functions import *
-from impl_g_graph_from_map import build_graph_from_png
+from impl_g_graph_from_map import build_graph_from_png, build_h_func
 from impl_alg_CA_star import calc_ca_star
 from impl_alg_dsa import calc_dsa
 from impl_alg_mgm import calc_mgm
@@ -35,6 +35,7 @@ def main():
     success_rate_dict = create_plot_dict()
 
     nodes, nodes_dict = build_graph_from_png(IMAGE_NAME)
+    h_func = build_h_func(nodes, nodes_dict, IMAGE_NAME)
     print_time('Start time')
 
     # n agents
@@ -52,9 +53,10 @@ def main():
                 start = time.time()
                 alg = algs_dict[alg_name]
                 if alg_name in ['dsa', 'mgm']:
-                    paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters)
+                    paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters,
+                                               h_func=h_func)
                 else:
-                    paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes)
+                    paths, solution_bool = alg(n_agents, nodes, nodes_dict, start_nodes, goal_nodes, h_func=h_func)
                 if solution_bool:
                     # print(f'\nalg: {alg_name}, SoC: {get_cost(paths)}')
                     if to_plot:
@@ -77,9 +79,9 @@ def main():
 
 
 if __name__ == '__main__':
-    from_n_agents = 5
+    from_n_agents = 7
     # to_n_agents = 13
-    to_n_agents = 8
+    to_n_agents = 10
     k_runs = 20
     ls_iters = 5
 
@@ -89,17 +91,18 @@ if __name__ == '__main__':
     # IMAGE_NAME = 'rmtst.png'
     # IMAGE_NAME = 'lak110d.png'
     # IMAGE_NAME = 'lak505d.png'
-    IMAGE_NAME = 'den520d.png'
+    IMAGE_NAME = 'den101d.png'
 
-    to_plot = True
-    # to_plot = False
+    # to_plot = True
+    to_plot = False
 
     with_seed = True
     # seed = 211
     seed = random.randint(0, 10000)
 
     # algorithms
-    algs_to_run = ['ca_star', 'dsa', 'mgm', 'cbs']
+    # algs_to_run = ['ca_star', 'dsa', 'mgm', 'cbs']
+    algs_to_run = ['ca_star', 'dsa']
     # algs_to_run = ['ca_star', 'dsa', 'mgm']
     # algs_to_run = ['mgm']
     algs_dict = {

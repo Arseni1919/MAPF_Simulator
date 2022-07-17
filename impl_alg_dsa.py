@@ -4,21 +4,21 @@ from functions import *
 from impl_g_local_search_graph import create_local_search_nodes
 
 
-def calc_dsa(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters):
+def calc_dsa(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes, ls_iters, h_func=None):
     agents_nodes = create_local_search_nodes(num_of_agents, start_nodes, goal_nodes, nodes, nodes_dict)
-    paths, solution_bool = run_dsa(agents_nodes, ls_iters)
+    paths, solution_bool = run_dsa(agents_nodes, ls_iters, h_func)
     return paths, solution_bool
 
 
-def run_dsa(agents_nodes, ls_iters=10):
+def run_dsa(agents_nodes, ls_iters=10, h_func=None):
     for agent in agents_nodes:
-        agent.init()
+        agent.init(h_func)
     for iteration in range(ls_iters):
         # print(f'\riteration: {iteration}', end='')
         for agent in agents_nodes:
             agent.send_messages(iteration)
         for agent in agents_nodes:
-            agent.dsa_update_path(iteration)
+            agent.dsa_update_path(iteration, h_func)
 
     # paths: {'agent name': [(x, y, t), ...], ...}
     # print()

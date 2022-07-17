@@ -32,7 +32,7 @@ def create_factor_graph(n_vars, start_nodes, goal_nodes, nodes, nodes_dict):
         opt_counter = 1
         var_node.add_to_domain(f'opt_{opt_counter}', first_path)
         for pos in first_path[1:]:
-            possible_paths = a_star_xyt(var_node, nodes, nodes_dict, vertex_conf=[pos])
+            possible_paths = a_star_xyt(var_node, nodes, nodes_dict, conf_vertex=[pos])
             if possible_paths:
                 opt_counter += 1
                 another_path = possible_paths[var_node.name]

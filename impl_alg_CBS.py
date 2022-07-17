@@ -5,9 +5,9 @@ from simulator_objects import Agent
 from impl_a_star_xyt import a_star_xyt
 
 
-def calc_cbs(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes):
+def calc_cbs(num_of_agents, nodes, nodes_dict, start_nodes, goal_nodes, h_func=None):
     agents = [Agent(i, start=start_nodes[i], goal=goal_nodes[i]) for i in range(num_of_agents)]
-    paths = run_cbs(agents, nodes=nodes, nodes_dict=nodes_dict)
+    paths = run_cbs(agents, nodes=nodes, nodes_dict=nodes_dict, h_func=h_func)
     paths, solution_bool = check_validity(paths)
     return paths, solution_bool
 
@@ -50,7 +50,7 @@ class CTNode:
 
     def create_solution(self, h_func=None):
         for agent in self.agents:
-            # if agent.name == 'agent_8' and (12, 10, 6) in self.vertex_conf['agent_8']:
+            # if agent.name == 'agent_8' and (12, 10, 6) in self.conf_vertex['agent_8']:
             #     print('here')
             path = a_star_xyt(agent, self.nodes, self.nodes_dict,
                               self.vertex_conf[agent.name], self.edge_conf[agent.name], h_func=h_func)
@@ -97,7 +97,7 @@ def validate_paths_until_first_conflict(node):
                 if reversed_edge in edges_list_2:
                     vertex_conf = None
                     edge_conf = (agent_name_1, agent_name_2), {agent_name_1: edge, agent_name_2: reversed_edge}
-                    # edge_conf = (agent_name_1, agent_name_2), {agent_name_1: reversed_edge, agent_name_2: edge}
+                    # conf_edge = (agent_name_1, agent_name_2), {agent_name_1: reversed_edge, agent_name_2: edge}
                     return vertex_conf, edge_conf
     return None, None
 
@@ -114,12 +114,12 @@ def run_cbs(agents, nodes, nodes_dict, h_func=None):
         curr_node = open_list.pop(0)
         # if len(open_list) > 72:
             # print('here 1')
-        # if (12, 10, 6) in curr_node.vertex_conf['agent_8']:
+        # if (12, 10, 6) in curr_node.conf_vertex['agent_8']:
             # print('here 2')
 
         # validate
         vertex_conf, edge_conf = validate_paths_until_first_conflict(curr_node)
-        # print(f'\n---\nvertex: {vertex_conf}, \nedge: {edge_conf} \n ---')
+        # print(f'\n---\nvertex: {conf_vertex}, \nedge: {conf_edge} \n ---')
         if vertex_conf is None and edge_conf is None:
             # return solution
             return curr_node.solution
@@ -142,8 +142,8 @@ def run_cbs(agents, nodes, nodes_dict, h_func=None):
                     open_list.append(new_node)
                     # if len(open_list) > 73:
                     #     print('###########')
-                    #     print(f'\n--- Curr node:\nvertex: {curr_node.vertex_conf}, \nedge: {curr_node.edge_conf} \n ---')
-                    #     print(f'\n--- New node:\nvertex: {new_node.vertex_conf}, \nedge: {new_node.edge_conf} \n ---')
+                    #     print(f'\n--- Curr node:\nvertex: {curr_node.conf_vertex}, \nedge: {curr_node.conf_edge} \n ---')
+                    #     print(f'\n--- New node:\nvertex: {new_node.conf_vertex}, \nedge: {new_node.conf_edge} \n ---')
 
         # EDGE CONFLICT
         if edge_conf is not None:
