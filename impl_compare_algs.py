@@ -79,11 +79,11 @@ def main():
 
 
 if __name__ == '__main__':
-    from_n_agents = 7
+    from_n_agents = 2
     # to_n_agents = 13
     to_n_agents = 10
-    k_runs = 20
-    ls_iters = 5
+    k_runs = 100
+    ls_iters = 10
 
     # IMAGE_NAME = '19_20_warehouse.png'
     # IMAGE_NAME = 'lak108d.png'
@@ -102,7 +102,8 @@ if __name__ == '__main__':
 
     # algorithms
     # algs_to_run = ['ca_star', 'dsa', 'mgm', 'cbs']
-    algs_to_run = ['ca_star', 'dsa']
+    algs_to_run = ['ca_star', 'dsa', 'cbs']
+    # algs_to_run = ['ca_star', 'dsa']
     # algs_to_run = ['ca_star', 'dsa', 'mgm']
     # algs_to_run = ['mgm']
     algs_dict = {

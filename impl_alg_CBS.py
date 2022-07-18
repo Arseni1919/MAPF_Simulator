@@ -57,6 +57,9 @@ class CTNode:
             if path is not None:
                 self.solution[agent.name] = path
                 self.cost = get_cost(self.solution)
+            else:
+                self.cost = self.infinity
+                break
 
 
 def get_edge_list(path):
@@ -103,6 +106,7 @@ def validate_paths_until_first_conflict(node):
 
 
 def run_cbs(agents, nodes, nodes_dict, h_func=None):
+    start = time.time()
     infinity = 1e10
     root_node = CTNode(agents, nodes, nodes_dict)
     root_node.create_solution(h_func)
@@ -162,6 +166,12 @@ def run_cbs(agents, nodes, nodes_dict, h_func=None):
                 if new_node.cost < infinity:
                     open_list.append(new_node)
 
+        # time constraint
+        end = time.time() - start
+        if end > 2:
+            print(f'\n[CONSTRAINT]: Out of time constraint {end : .2f}.')
+            return None
+
     return None
 
 
@@ -185,7 +195,8 @@ def main():
 
 if __name__ == '__main__':
     n_agents = 5
-    with_seed = True
+    # with_seed = True
+    with_seed = False
     seed = 3883
     # seed = random.randint(0, 10000)
     # image_name = '19_20_warehouse.png'

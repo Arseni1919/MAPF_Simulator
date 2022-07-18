@@ -87,6 +87,8 @@ def pprint_counter(big_list, title):
 
 
 def check_validity(paths):
+    if paths is None:
+        return None, False
     long_paths = lengthen_paths(paths)
     # vertices
     big_vertex_list = []
