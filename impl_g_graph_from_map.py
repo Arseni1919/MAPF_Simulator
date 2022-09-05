@@ -6,24 +6,7 @@ from simulator_objects import Node
 from a_star import a_star
 from functions import *
 from GLOBALS import *
-
-
-map_dimensions_dict = {
-    'lak108d.png': (26, 27),
-    'lak109d.png': (42, 33),
-    'lak110d.png': (21, 30),
-    'hrt201d.png': (272, 297),
-    'den520d.png': (257, 256),
-    'den101d.png': (41, 73),
-    'lak505d.png': (195, 194),
-    'Berlin_1_256.png': (256, 256),
-    '19_20_warehouse.png': (19, 20),
-    '10_10_random.png': (10, 10),
-    '9_10_no_obstacles.png': (9, 10),
-    '3_10_random.png': (3, 10),
-    '2_10_random.png': (2, 10),
-    'rmtst.png': (50, 182),
-}
+from map_dimensions import map_dimensions_dict
 
 
 def set_nei(name_1, name_2, nodes_dict):
@@ -157,26 +140,17 @@ def main():
     image_name = '19_20_warehouse.png'
     image_name = 'rmtst.png'
     nodes, nodes_dict = build_graph_from_png(image_name)
-
+    dim_x, dim_y = map_dimensions_dict[image_name]
     node_start, node_goal = np.random.choice(nodes, size=2)
-
-    result = None
     result = a_star(start=node_start, goal=node_goal, nodes=nodes)
     print('finished calculating path')
 
     # PLOT RESULTS:
-
-    # plot nodes
-    x_list = [node.x for node in nodes]
-    y_list = [node.y for node in nodes]
-    print(f'max y: {max(y_list)}\n|\n|\n__ __ __ max x: {max(x_list)}')
-    print(f'n nodes: {len(nodes)}')
-    plt.scatter(x_list, y_list, marker='s', color='gray', s=2.0, alpha=0.1)
-
-    # plot edges
+    mat = np.zeros((dim_x, dim_y))
     for node in nodes:
-        for nei in node.neighbours:
-            plt.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray', alpha=0.1)
+        mat[node.x, node.y] = 1
+    plt.imshow(mat.T, origin="lower")
+    plt.tight_layout()
 
     # plot found path
     if result is not None:
@@ -189,6 +163,20 @@ def main():
             successor = node
 
     plt.show()
+
+
+    # plot nodes
+    # x_list = [node.x for node in nodes]
+    # y_list = [node.y for node in nodes]
+    # print(f'max y: {max(y_list)}\n|\n|\n__ __ __ max x: {max(x_list)}')
+    # print(f'n nodes: {len(nodes)}')
+    # plt.scatter(x_list, y_list, marker='s', color='gray', s=2.0, alpha=0.1)
+
+    # plot edges
+    # for node in nodes:
+    #     for nei in node.neighbours:
+    #         plt.plot([node.x, nodes_dict[nei].x], [node.y, nodes_dict[nei].y], linestyle='-', c='gray', alpha=0.1)
+
 
 
 if __name__ == '__main__':

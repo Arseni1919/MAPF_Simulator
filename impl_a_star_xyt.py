@@ -28,7 +28,8 @@ def build_the_solution(agent, curr_node):
 
 
 def f_value(e):
-    return e.f() - e.t
+    # return e.f() - e.t
+    return e.f()
 
 
 def gen_node(i_node, t):

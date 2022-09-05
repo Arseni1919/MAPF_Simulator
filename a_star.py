@@ -22,15 +22,15 @@ def get_node(successor_ID, nodes):
     return None
 
 
-def way(node_current, node_successor):
-    return heuristic(node_current, node_successor)
+# def way(node_current, node_successor):
+#     return heuristic(node_current, node_successor)
 
 
-def a_star(start, goal, nodes):
+def a_star(start, goal, nodes, h_func):
     open_list = []
     close_list = []
     node_current = start
-    node_current.h = heuristic(start, goal)
+    node_current.h = h_func(start, goal)
     open_list.append(start)
     while len(open_list) > 0:
         node_current = get_lowest_f_node_from(open_list)
@@ -38,7 +38,7 @@ def a_star(start, goal, nodes):
             break
         for successor_ID in node_current.neighbours:
             node_successor = get_node(successor_ID, nodes)
-            successor_current_cost = node_current.g + way(node_current, node_successor)
+            successor_current_cost = node_current.g + h_func(node_current, node_successor)
             if node_successor in open_list:
                 if node_successor.g <= successor_current_cost:
                     continue
@@ -49,7 +49,7 @@ def a_star(start, goal, nodes):
                 open_list.append(node_successor)
             else:
                 open_list.append(node_successor)
-                node_successor.h = heuristic(node_successor, goal)
+                node_successor.h = h_func(node_successor, goal)
             node_successor.g = successor_current_cost
             node_successor.parent = node_current
 
@@ -79,7 +79,7 @@ def main():
     node_start = nodes[0]
     node_goal = nodes[-1]
 
-    result = a_star(start=node_start, goal=node_goal, nodes=nodes)
+    result = a_star(start=node_start, goal=node_goal, nodes=nodes, h_func=heuristic)
 
     # PLOT RESULTS:
 

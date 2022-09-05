@@ -14,10 +14,19 @@ class Node:
         self.parent = None
         self.g = 0
         self.h = 0
-        self.t = 0
 
     def f(self):
         return self.g + self.h
+
+
+class NodeT(Node):
+    def __init__(self, ID, x, y, neighbours):
+        super(NodeT, ID, x, y, neighbours)
+        self.t = 0
+        self.name = f'{self.x}_{self.y}_{self.t}'
+
+    def f(self):
+        return self.t + self.h
 
 
 class Agent:
